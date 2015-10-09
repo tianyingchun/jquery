@@ -1117,5 +1117,16 @@ $.ui.plugin.add("draggable", "zIndex", {
 });
 
 var draggable = $.ui.draggable;
+console.log(draggable);
 
-module.exports = draggable;
+module.exports = {
+  /**
+   * The draggable components
+   * @param  {Object} elem    jquery object
+   * @param  {[type]} options [description]
+   * @return {[type]}         [description]
+   */
+  run: function (elem, options) {
+    $(elem).draggable(options);
+  }
+};
