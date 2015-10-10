@@ -1,45 +1,64 @@
 require('./dropdown.less');
 
 var $ = require('jquery');
-var pluginName = "ui-dropdown";
-var pluginClassName = ".ui-dropdown";
+var { UI, Plugin } = require('../core');
 
+var pluginName = "dropdown";
+var pluginDataName = "ui.dropdown";
+/**
+ * The Plugin Component
+ * @param {DOMNode} element
+ * @param {Object} options
+ */
 var Dropdown = function (element, options) {
-  this.options = options = $.extend({}, Plugin.DEFAULTS, options);
-  this.element = element;
-  this.$element = $(element).addClass(pluginName).addClass(options.containerClass);
-
+  this.options = $.extend({}, Dropdown.DEFAULTS, options);
+  this.$element = $(element).addClass(pluginName);;
   // initialize.
   this._init();
 };
+
+Dropdown.DEFAULTS = {
+
+  launcherSelector: ".dropdown-toggle",
+  launcherTargetContainerSelector: ".dropdown-content",
+  menuItemSelector: "li",
+
+  my_position: 'left top',
+  at_position: 'left bottom',
+
+  // while click toggle button, assign launcherClass to togger button.
+  toggleLauncher: true,
+
+  launchOnMouseEnter: false,
+
+  // The value indicates if auto close menu container while click any of menu items.
+  menuAlwaysOpen: false,
+
+  onSelect: function () {}
+};
+
 // export public method.
 $.extend(Dropdown.prototype, {
   //@private.
   _init: function () {
+    console.log('initial....');
+
     var options = this.options;
-
-    this.destroy();
     var $element = this.$element;
-    var $launcher = this.$launcher = $(options.launcherSelector);
-    var $launcherContainer = $(options.launcherContainerSelector);
 
-    var $menuContainer = this.$menuContainer = $(options.menuSelector);
+    if ($element.data(pluginDataName)) {
+      return;
+    }
 
-
-    // The launcher class.
-    $launcher.removeClass(options.launcherClass).addClass(options.launcherClass);
-    // The launcher container class.
-    $launcherContainer.addClass(options.launcherContainerClass)
-
-    // The launcher target items container class.
-    $menuContainer.addClass(options.menuClass);
+    var $launcher = this.$launcher = $element.find(options.launcherSelector);
+    var $launcherTarget = this.$launcherTarget = $element.find(options.launcherTargetContainerSelector).hide();
 
     $element.off("onSelect").on("onSelect", options.onSelect);
 
     // delegate menu item click event to menu container.
-    $menuContainer.off('click', options.menuItemSelector).on('click', options.menuItemSelector, function (evt) {
+    $launcherTarget.on('click', options.menuItemSelector, function (evt) {
       $element.triggerHandler('onSelect', {
-        index: parseInt($menuContainer.find(options.menuItemSelector).index($(this))) + 1,
+        index: parseInt($launcherTarget.find(options.menuItemSelector).index($(this))) + 1,
         value: $(this).data("value")
       });
       if (options.menuAlwaysOpen) {
@@ -49,92 +68,69 @@ $.extend(Dropdown.prototype, {
       }
     });
 
-    $element.off('click', options.launcherSelector).on('click', options.launcherSelector, function () {
-
-      if (options.toggleLauncher) {
-        $launcher.addClass(options.launcherSelectedClass);
-      }
-
-      // show menu container.
-      $menuContainer.show().position({
-        my: options.my_position,
-        at: options.at_position,
-        of: $launcherContainer
-      });
-
-      $(document).one("click", function () {
-        $menuContainer.hide();
-        if (options.toggleLauncher) {
-          $launcher.removeClass(options.launcherSelectedClass);
+    $launcher
+      .on('click', $.proxy(this.open, this))
+      .on('mouseenter', function () {
+        if (options.launchOnMouseEnter) {
+          $launcher.trigger('click');
         }
       });
-
-      return false;
-    });
-
-    $element.off('mouseenter', options.launcherSelector).on('mouseenter', options.launcherSelector, function () {
-      if (options.launchOnMouseEnter) {
-        $launcher.trigger('click');
+    $element.on('mouseleave', options.menuSelector, function () {
+      if (options.toggleLauncher) {
+        $launcher.removeClass('active');
       }
-    });
-
-    $element.off('mouseleave', options.menuSelector).on('mouseleave', options.menuSelector, function () {
       if (!options.menuAlwaysOpen) {
-        $menuContainer.hide();
+        $launcherTarget.hide();
       }
     });
   },
-  destroy: function () {
-    this.$element.removeData(pluginName);
-  }
-});
-
-function Plugin(options, data) {
-  var args = Array.prototype.slice.call(arguments, 1);
-  return this.each(function () {
-    var $this = $(this);
-    if (typeof options == "string") {
-      var dropdown = $this.data(pluginName);
-      dropdown[options].apply(dropdown, args);
-      // INIT with optional options
-    } else if (!$this.is(pluginClassName)) {
-      // store dropdown plugin name to current dom node.
-      $this.data(pluginName, new Dropdown(this, options));
+  open: function () {
+    var self = this;
+    var options = self.options;
+    if (options.toggleLauncher) {
+      self.$launcher.addClass('active');
     }
-  });
-}
 
-Plugin.DEFAULTS = {
-  containerClass: "containerClass",
-  launcherContainerClass: 'ui-launcher-container',
-  launcherClass: 'launcherClass',
-  launcherSelectedClass: 'launcher-selected ui-widget-header ui-corner-all',
-  menuClass: 'ui-menu-container',
+    // show menu container.
+    self.$launcherTarget.show().position({
+      my: options.my_position,
+      at: options.at_position,
+      of: self.$launcher
+    });
 
-  launcherSelector: "#launcher",
-  launcherContainerSelector: "#launcher-container",
+    $(document).one("click", function () {
+      self.$launcherTarget.hide();
+      if (options.toggleLauncher) {
+        self.$launcher.removeClass('active');
+      }
+    });
 
-  menuSelector: "#menu",
-  menuItemSelector: "li",
+    return false;
+  },
+  close: function () {
 
-  my_position: 'left top',
-  at_position: 'left bottom',
-
-  // while click toggle button, assign launcherClass to togger button.
-  toggleLauncher: false,
-  launchOnMouseEnter: false,
-  // The value indicates if auto close menu container while click any of menu items.
-  menuAlwaysOpen: false,
-  onSelect: function () {}
-};
-
-// Expose plugin to $.fn.prototype.
-$.fn.extend({
-  dropdown: Plugin
+  },
+  destroy: function () {
+    this.$element.removeData(pluginDataName);
+  }
 });
 
-module.exports = {
-  run: function (options, element) {
-    $(element).dropdown(options);
-  }
-};
+// Register plugin.
+Plugin(pluginName, Dropdown);
+
+// Init code
+// $(document).on('click.dropdown.data-api', '[data-dropdown]', function (e) {
+//   var $dropdown = $(e.target);
+//   if (!$dropdown.hasClass('dropdown')) {
+//     $dropdown = $dropdown.closest('.dropdown');
+//   }
+//   $dropdown[pluginName]('open');
+// });
+
+UI.ready(function dropdown(context) {
+  var $dropdown = $('[data-dropdown]', context);
+  // auto initialize component via data-api.
+  $dropdown[pluginName]();
+}, pluginDataName);
+
+module.exports = Dropdown;

@@ -2,8 +2,9 @@
  * jQuery UI Position 1.11.4, http://api.jqueryui.com/position/
  */
 var $ = require('jquery');
+var UI = require('./ui');
 
-$.ui = $.ui || {};
+$.ui = UI;
 
 var cachedScrollbarWidth, supportsOffsetFractions,
   max = Math.max,
@@ -504,6 +505,4 @@ $.ui.position = {
   testElementParent.removeChild(testElement);
 })();
 
-var position = $.ui.position;
-
-module.exports = position;
+module.exports = UI.position;
