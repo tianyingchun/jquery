@@ -1,6 +1,5 @@
 var $ = require('jquery');
 var UI = require('./ui');
-
 /**
  * Plugin Component Pattern for jQuery
  *
