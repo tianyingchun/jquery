@@ -28,10 +28,13 @@ var Dropdown = Component.extend({
 
     // delegate menu item click event to menu container.
     $launcherTarget.on('click', options.menuItemSelector, function (evt) {
+
+      var $menuItem = $(this);
       $element.triggerHandler('onSelect', {
-        index: parseInt($launcherTarget.find(options.menuItemSelector).index($(this))) + 1,
-        value: $(this).data("value")
+        index: parseInt($launcherTarget.find(options.menuItemSelector).index($menuItem)) + 1,
+        value: $menuItem.data("value")
       });
+      $menuItem.addClass('active').siblings(options.menuItemSelector).removeClass('active');
       if (options.menuAlwaysOpen) {
         // if clicked target is current menu items?
         evt.preventDefault();
@@ -47,27 +50,23 @@ var Dropdown = Component.extend({
           $launcher.trigger('click');
         }
       })
-      .on('mouseleave', function () {
+      .on('mouseleave', this.bind(function (event) {
         if (options.launchOnMouseEnter) {
-          $launcher.data('timeoutId', setTimeout(function () {
-            $launcherTarget.hide();
-          }, 200));
+          $launcher.data('timeoutId', setTimeout(this.bind(this.close), 200));
         }
-      });
+      }));
     $launcherTarget
       .on('mouseenter', function () {
         clearTimeout($launcher.data('timeoutId'));
       })
-      .on('mouseleave', options.menuSelector, function () {
+      .on('mouseleave', options.menuSelector, this.bind(function () {
         if (options.launchOnMouseEnter && options.toggleLauncher) {
           $launcher.removeClass('active');
         }
         if (!options.menuAlwaysOpen || options.launchOnMouseEnter) {
-          $launcher.data('timeoutId', setTimeout(function () {
-            $launcherTarget.hide();
-          }, 200));
+          $launcher.data('timeoutId', setTimeout(this.bind(this.close), 200));
         }
-      });
+      }));
   },
   open: function () {
     var self = this;
@@ -91,9 +90,7 @@ var Dropdown = Component.extend({
   },
   close: function () {
     this.$launcherTarget.hide();
-    if (this.options.toggleLauncher) {
-      this.$launcher.removeClass('active');
-    }
+    this.$launcher.removeClass('active');
   },
   destroy: function () {
     this.$launcher.off('click').off('mouseenter').off('mouseleave');

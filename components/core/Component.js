@@ -37,6 +37,12 @@ Component.prototype = {
   setOptions: function (options) {
     this.options = $.extend(this.options, options);
   },
+  // @public
+  // bind callback to specificed context.
+  bind: function (fn, context /*, additionalArguments */ ) {
+    var args = [fn, context || this].concat(Array.prototype.slice.call(arguments, 2));
+    return $.proxy.apply($.proxy, args);
+  },
   //@override.
   initialize: function ($element, options) {
     throw new Error('the initialize() should be implemented!');
