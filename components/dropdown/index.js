@@ -1,7 +1,9 @@
 require('./dropdown.less');
 
 var $ = require('jquery');
-var { UI, Plugin, Component } = require('../core');
+var {
+  UI, Plugin, Component
+} = require('../core');
 var pluginName = "dropdown";
 var pluginDataName = "ui.dropdown";
 /**
@@ -41,17 +43,31 @@ var Dropdown = Component.extend({
       .on('click', $.proxy(this.open, this))
       .on('mouseenter', function () {
         if (options.launchOnMouseEnter) {
+          clearTimeout($launcher.data('timeoutId'));
           $launcher.trigger('click');
         }
+      })
+      .on('mouseleave', function () {
+        if (options.launchOnMouseEnter) {
+          $launcher.data('timeoutId', setTimeout(function () {
+            $launcherTarget.hide();
+          }, 200));
+        }
       });
-    $element.on('mouseleave', options.menuSelector, function () {
-      if (options.toggleLauncher) {
-        $launcher.removeClass('active');
-      }
-      if (!options.menuAlwaysOpen) {
-        $launcherTarget.hide();
-      }
-    });
+    $launcherTarget
+      .on('mouseenter', function () {
+        clearTimeout($launcher.data('timeoutId'));
+      })
+      .on('mouseleave', options.menuSelector, function () {
+        if (options.launchOnMouseEnter && options.toggleLauncher) {
+          $launcher.removeClass('active');
+        }
+        if (!options.menuAlwaysOpen || options.launchOnMouseEnter) {
+          $launcher.data('timeoutId', setTimeout(function () {
+            $launcherTarget.hide();
+          }, 200));
+        }
+      });
   },
   open: function () {
     var self = this;
@@ -80,8 +96,8 @@ var Dropdown = Component.extend({
     }
   },
   destroy: function () {
-    this.$launcher.off('click').off('mouseenter');
-    this.$launcherTarget.off('click').off('mouseleave').off('onSelect');
+    this.$launcher.off('click').off('mouseenter').off('mouseleave');
+    this.$launcherTarget.off('click').off('mouseenter').off('mouseleave').off('onSelect');
     this.$element.removeData(pluginDataName);
   }
 });
