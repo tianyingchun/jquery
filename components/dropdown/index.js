@@ -93,6 +93,8 @@ var Dropdown = Component.extend({
     this.$launcher.removeClass('active');
   },
   destroy: function () {
+    // destory related resource of base component.
+    this._destroy();
     this.$launcher.off('click').off('mouseenter').off('mouseleave');
     this.$launcherTarget.off('click').off('mouseenter').off('mouseleave').off('onSelect');
     this.$element.removeData(pluginDataName);

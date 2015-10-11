@@ -1,5 +1,6 @@
 var $ = require('jquery');
 
+// Attach UI to $.ui.
 $.ui = $.ui || {};
 
 var UI = $.ui;
@@ -9,12 +10,28 @@ var $body = $('body');
 // Dom mutation watchers
 UI.DOMWatchers = [];
 UI.DOMReady = false;
-UI.ready = function (callback, key) {
-  // cache all watchers
-  UI.DOMWatchers.push({
-    callback: callback,
-    key: key
+
+function findWatcher(key) {
+  var specificedWatcher = null;
+  $.each(UI.DOMWatchers, function (i, watcher) {
+    if (watcher.key === key) {
+      specificedWatcher = watcher;
+      return false;
+    }
   });
+  return specificedWatcher;
+}
+UI.ready = function (callback, key) {
+  var existed = findWatcher(key);
+  if (existed) {
+    console.warn('has existed dom watcher `' + key + '` UI.ready()');
+  } else {
+    // cache all watchers without duplicated.
+    UI.DOMWatchers.push({
+      callback: callback,
+      key: key
+    });
+  }
   if (UI.DOMReady) {
     console.log('UI Ready call');
     callback(document);
@@ -24,13 +41,7 @@ UI.ready = function (callback, key) {
 // provider method to re run all DOMWatcher attached in domready.
 UI.run = function (key) {
   if (key) {
-    var specificedWatcher = null;
-    $.each(UI.DOMWatchers, function (i, watcher) {
-      if (watcher.key === key) {
-        specificedWatcher = watcher;
-        return false;
-      }
-    });
+    var specificedWatcher = findWatcher(key);
     console.log('UI.run()', specificedWatcher);
     specificedWatcher && specificedWatcher.callback(document);
   } else {

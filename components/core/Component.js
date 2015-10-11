@@ -22,16 +22,14 @@ Component.prototype = {
     if (!this.pluginName) {
       throw Error('you must provider `pluginName` property for your Component!');
     }
-    var _pluginDataName = this.getPluginDataName();
-    if ($element.data(_pluginDataName)) {
-      return;
-    } else {
-      $element.data(_pluginDataName, this);
-    }
-    console.log('component `' + this.pluginName + '`initialize()....', $element, options);
+    var _pluginDataName = this.getDataPluginInstanceName();
 
-    // invoke child component initialize methods.
-    this.initialize($element, options);
+    if (!$element.data(_pluginDataName)) {
+      $element.data(_pluginDataName, this);
+      console.log('component `' + this.pluginName + '`initialize()....', $element, options);
+      // invoke child component initialize methods.
+      this.initialize($element, options);
+    }
   },
   // @public
   setOptions: function (options) {
@@ -47,13 +45,18 @@ Component.prototype = {
   initialize: function ($element, options) {
     throw new Error('the initialize() should be implemented!');
   },
+  _destroy: function () {
+    this.$element.data(this.getDataPluginInstanceName(), null);
+    this.$element.data(this.pluginName, null);
+  },
   //@override.
   destroy: function () {
+    this._destroy();
     throw new Error('the destroy() should be implemented!');
   },
   //@public
-  // get plugin
-  getPluginDataName: function () {
+  // get plugin data name that used to stored plugin component instance.
+  getDataPluginInstanceName: function () {
     return 'ui.' + this.pluginName;
   }
 };

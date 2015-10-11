@@ -21,13 +21,16 @@ var plugin = function UIPlugin(name, Component, pluginOption) {
     var allArgs = Array.prototype.slice.call(arguments, 0);
     var args = allArgs.slice(1);
 
-    var dataName = 'ui.' + name;
+    // get plugin data name that used to stored plugin component instance.
+    var dataPluginInstanceName = 'ui.' + name;
+
+    // default data store via data-pluginName='{"":""}'
     var dataOptionName = pluginOption.dataOptionName || name;
     var propReturn;
     var $set = this.each(function () {
 
       var $this = $(this);
-      var instance = $this.data(dataName);
+      var instance = $this.data(dataPluginInstanceName);
 
       // <div data-pluginName='{"name":"value"}'></div>
       var attrDataOption = $this.data(dataOptionName);
@@ -40,7 +43,7 @@ var plugin = function UIPlugin(name, Component, pluginOption) {
 
       if (!instance) {
         // Component plugin API: constructor(element, options);
-        $this.data(dataName, (instance = new Component(this, options)));
+        $this.data(dataPluginInstanceName, (instance = new Component(this, options)));
       }
 
       // custom method call while instance has been ready.
@@ -51,8 +54,7 @@ var plugin = function UIPlugin(name, Component, pluginOption) {
         pluginOption.before && pluginOption.before.call($this, allArgs, instance);
 
         if (typeof option === 'string') {
-          propReturn
-            = typeof instance[option] === 'function' ? instance[option].apply(instance, args) : instance[option];
+          propReturn = typeof instance[option] === 'function' ? instance[option].apply(instance, args) : instance[option];
         }
 
         // after method call
