@@ -19,6 +19,19 @@ $.extend($.fn, {
     if (pluginName) {
       return $(this).data('ui.' + pluginName);
     }
+    console.warn('you must provider `<widgetName>` formatter: `ui.<pluginName>`');
+    return null;
+  },
+  /**
+   * Get the `widget` instance of current dom.
+   * @param  {String} widgetName the current `Widget` plugin name.
+   * @return {Object}            the instance of `Widget`
+   */
+  getWidgetInstance: function (widgetName) {
+    if (widgetName) {
+      return $(this).data('ui.widget.' + widgetName);
+    }
+    console.warn('you must provider `<widgetName>` formatter: `ui.widget.<widgetName>`');
     return null;
   }
 });

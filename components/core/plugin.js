@@ -1,5 +1,14 @@
 var $ = require('jquery');
 var UI = require('./ui');
+
+function baseToString(value) {
+  return value == null ? '' : (value + '');
+}
+
+function capitalize(str) {
+  str = baseToString(str);
+  return str && (str.charAt(0).toUpperCase() + str.slice(1));
+}
 /**
  * Plugin Component Pattern for jQuery
  *
@@ -74,7 +83,12 @@ var plugin = function UIPlugin(name, Component, pluginOption) {
     return this;
   };
 
+  // assign plugin name to Component.name
+  Component.displayName = capitalize(name);
   UI[name] = Component;
 };
 
-module.exports = UI.plugin = plugin;
+module.exports = {
+  plugin: plugin,
+  widget: plugin
+};

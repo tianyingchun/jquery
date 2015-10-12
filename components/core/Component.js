@@ -1,4 +1,4 @@
-var extend = require('./extend');
+var extend = require('../../utils/extend');
 
 /**
  * Design jquery component plugin system.
