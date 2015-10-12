@@ -68,7 +68,11 @@ Component.prototype = {
 Component.extend = extend;
 // static methods.
 Component.getPluginInstanceName = function (componentName) {
-  return 'ui.' + componentName;
+  if (componentName) {
+    return 'ui.' + componentName;
+  } else {
+    console.error('the missed `compnentName` is required!');
+  }
 };
 
 /**
@@ -84,7 +88,11 @@ var Widget = Component.extend({
 
 // static methods.
 Widget.getPluginInstanceName = function (componentName) {
-  return 'ui.widget.' + componentName;
+  if (componentName) {
+    return 'ui.widget.' + componentName;
+  } else {
+    console.error('the missed `compnentName` is required!');
+  }
 };
 
 
