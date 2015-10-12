@@ -1,11 +1,9 @@
 require('./dropdown.less');
 
 var $ = require('jquery');
-var {
-  UI, Plugin, Component
-} = require('../core');
-var pluginName = "dropdown";
-var pluginDataName = "ui.dropdown";
+var { UI, createPlugin, ComponentClass } = require('../core');
+var componentName = "dropdown";
+
 /**
  * The Plugin Component
  *
@@ -13,8 +11,8 @@ var pluginDataName = "ui.dropdown";
  * @param {DOMNode} element
  * @param {Object} options
  */
-var Dropdown = Component.extend({
-  pluginName: pluginName,
+var Dropdown = ComponentClass.extend({
+  componentName: componentName,
 
   /** @override */
   initialize: function ($element, options) {
@@ -97,7 +95,6 @@ var Dropdown = Component.extend({
     this._destroy();
     this.$launcher.off('click').off('mouseenter').off('mouseleave');
     this.$launcherTarget.off('click').off('mouseenter').off('mouseleave').off('onSelect');
-    this.$element.removeData(pluginDataName);
   }
 });
 
@@ -123,7 +120,7 @@ Dropdown.DEFAULTS = {
 
 
 // Register plugin.
-Plugin(pluginName, Dropdown);
+createPlugin(componentName, Dropdown);
 
 // Init code
 // $(document).on('click.dropdown.data-api', '[data-dropdown]', function (e) {
@@ -131,13 +128,13 @@ Plugin(pluginName, Dropdown);
 //   if (!$dropdown.hasClass('dropdown')) {
 //     $dropdown = $dropdown.closest('.dropdown');
 //   }
-//   $dropdown[pluginName]('open');
+//   $dropdown[componentName]('open');
 // });
 
 UI.ready(function dropdown(context) {
   var $dropdown = $('[data-dropdown]', context);
   // auto initialize component via data-api.
-  $dropdown[pluginName]();
-}, pluginDataName);
+  $dropdown[componentName]();
+}, ComponentClass.getPluginInstanceName(componentName));
 
 module.exports = Dropdown;

@@ -1,17 +1,21 @@
 var $ = require('jquery');
 var UI = require('./ui');
 
-function baseToString(value) {
+var PLUGINS = UI.plugins = UI.plugins || {};
+var WIDGETS = UI.widgets = UI.widgets|| {};
+
+function baseToString (value) {
   return value == null ? '' : (value + '');
 }
 
-function capitalize(str) {
+function capitalize (str) {
   str = baseToString(str);
   return str && (str.charAt(0).toUpperCase() + str.slice(1));
 }
 /**
  * Plugin Component Pattern for jQuery
  *
+ * @param {String} type - component type: widget|plugin
  * @param {String} name - plugin name
  * @param {Function} Component - plugin constructor
  * @param {Object} [pluginOption]
@@ -19,19 +23,22 @@ function capitalize(str) {
  * @param {Function} pluginOption.methodCall(args, instance) - custom method call
  * @param {Function} pluginOption.before(args, instance)
  * @param {Function} pluginOption.after(args, instance)
- * @since v2.4.1
  */
-var plugin = function UIPlugin(name, Component, pluginOption) {
+function UIComponent(type, name, Component, pluginOption) {
+
+  pluginOption = pluginOption || {};
 
   var old = $.fn[name];
-  pluginOption = pluginOption || {};
+  if (old) {
+    console.warn('The `' + type + '` name `' + name + '` has been taken!');
+  }
 
   $.fn[name] = function (option) {
     var allArgs = Array.prototype.slice.call(arguments, 0);
     var args = allArgs.slice(1);
 
     // get plugin data name that used to stored plugin component instance.
-    var pluginInstanceName = 'ui.' + name;
+    var componentInstanceName = (type === 'widget' ? 'ui.widget.' : 'ui.') + name;
 
     // default data store via data-pluginName='{"":""}'
     var dataOptionName = pluginOption.dataOptionName || name;
@@ -39,20 +46,16 @@ var plugin = function UIPlugin(name, Component, pluginOption) {
     var $set = this.each(function () {
 
       var $this = $(this);
-      var instance = $this.data(pluginInstanceName);
+      var instance = $this.data(componentInstanceName);
 
       // <div data-pluginName='{"name":"value"}'></div>
       var attrDataOption = $this.data(dataOptionName);
-
       var options = $.extend({}, typeof attrDataOption === 'object' && attrDataOption, typeof option === 'object' && option);
-
-      if (!instance && option === 'destroy') {
-        return;
-      }
+      if (!instance && option === 'destroy') return;
 
       if (!instance) {
         // Component plugin API: constructor(element, options);
-        $this.data(pluginInstanceName, (instance = new Component(this, options)));
+        $this.data(componentInstanceName, (instance = new Component(this, options)));
       }
 
       // custom method call while instance has been ready.
@@ -85,10 +88,20 @@ var plugin = function UIPlugin(name, Component, pluginOption) {
 
   // assign plugin name to Component.name
   Component.displayName = capitalize(name);
-  UI[name] = Component;
+
+  if (type === 'plugin') {
+    PLUGINS[name] = Component;
+  } else {
+    WIDGETS[name] = Component;
+  }
+
 };
 
 module.exports = {
-  plugin: plugin,
-  widget: plugin
+  createPlugin: function plugin(name, Component, pluginOption) {
+    return UIComponent('plugin', name, Component, pluginOption);
+  },
+  createWidget: function widget(name, Component, pluginOption) {
+    return UIComponent('widget', name, Component, pluginOption);
+  }
 };

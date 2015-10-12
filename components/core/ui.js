@@ -19,7 +19,7 @@ $.extend($.fn, {
     if (pluginName) {
       return $(this).data('ui.' + pluginName);
     }
-    console.warn('you must provider `<widgetName>` formatter: `ui.<pluginName>`');
+    console.warn('you must provider `<pluginName>` formatter: `ui.<pluginName>`');
     return null;
   },
   /**
@@ -50,6 +50,14 @@ function findWatcher(key) {
   });
   return specificedWatcher;
 }
+/**
+ * Add dom watchers to cache list with cache key
+ * @author tianyingchun
+ * @date   2015-10-12
+ * @param  {Function} callback the callback will be invoked while domready
+ * @param  {String}   key      the cache key
+ * @return {void}
+ */
 UI.ready = function (callback, key) {
   var existed = findWatcher(key);
   if (existed) {

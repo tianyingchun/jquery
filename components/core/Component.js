@@ -2,15 +2,16 @@ var extend = require('../../utils/extend');
 
 /**
  * Design jquery component plugin system.
+ * The Plugin should be as an individual common web component hehaviors.
  * @author tianyingchun
- * @date {{date }}
  * @this {Component}
  * @param {DOMNode|String} element the dom selector or dom object or jquery object
  * @param {Object} options the plugin configuration.
  */
 function Component(element, options) {
-  this.$element = $(element).addClass(this.pluginName);
+  this.$element = $(element).addClass(this.getComponentBasicClassNames());
   this.options = $.extend({}, this.constructor.DEFAULTS, options);
+  // internal initialize component.
   this._initialize.call(this, this.$element, this.options);
 }
 
@@ -19,17 +20,30 @@ Component.prototype = {
 
   //@private
   _initialize: function ($element, options) {
-    if (!this.pluginName) {
-      throw Error('you must provider `pluginName` property for your Component!');
+    if (!this.componentName) {
+      throw Error('you must provider `componentName` property for your Component!');
     }
     var _pluginDataName = this.getPluginInstanceName();
 
     if (!$element.data(_pluginDataName)) {
       $element.data(_pluginDataName, this);
-      console.log('component `' + this.pluginName + '`initialize()....', $element, options);
+      console.log('component `' + this.componentName + '`initialize()....', $element, options);
       // invoke child component initialize methods.
       this.initialize($element, options);
     }
+  },
+  //@override.
+  initialize: function ($element, options) {
+    throw new Error('the initialize() should be implemented!');
+  },
+  _destroy: function () {
+    this.$element.data(this.getPluginInstanceName(), null);
+    this.$element.data(this.componentName, null);
+  },
+  //@override.
+  destroy: function () {
+    this._destroy();
+    throw new Error('the destroy() should be implemented!');
   },
   // @public
   setOptions: function (options) {
@@ -41,26 +55,40 @@ Component.prototype = {
     var args = [fn, context || this].concat(Array.prototype.slice.call(arguments, 2));
     return $.proxy.apply($.proxy, args);
   },
-  //@override.
-  initialize: function ($element, options) {
-    throw new Error('the initialize() should be implemented!');
-  },
-  _destroy: function () {
-    this.$element.data(this.getPluginInstanceName(), null);
-    this.$element.data(this.pluginName, null);
-  },
-  //@override.
-  destroy: function () {
-    this._destroy();
-    throw new Error('the destroy() should be implemented!');
-  },
   //@public
   // get plugin data name that used to stored plugin component instance.
   getPluginInstanceName: function () {
-    return 'ui.' + this.pluginName;
+    return this.constructor.getPluginInstanceName(this.componentName);
+  },
+  getComponentBasicClassNames: function () {
+    return this.componentName +' plugin-' + this.componentName;
   }
 };
 
 Component.extend = extend;
+// static methods.
+Component.getPluginInstanceName = function (componentName) {
+  return 'ui.' + componentName;
+};
 
-module.exports = Component;
+/**
+ * The widget should be as an site module can be composed from multiple components.
+ * @this Widget
+ *
+ */
+var Widget = Component.extend({
+  getComponentBasicClassNames: function () {
+    return this.componentName + ' widget-' + this.componentName;
+  }
+});
+
+// static methods.
+Widget.getPluginInstanceName = function (componentName) {
+  return 'ui.widget.' + componentName;
+};
+
+
+module.exports = {
+  ComponentClass:Component,
+  WidgetClass: Widget
+};

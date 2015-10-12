@@ -1,9 +1,8 @@
 require('./popup.less');
 // require('../core/easing');
 var $                         = require('jquery');
-var { UI, Plugin, Component } = require('../core');
-var pluginName                = "popup";
-var pluginDataName            = "ui.popup";
+var { UI, createPlugin, ComponentClass } = require('../core');
+var componentName             = "popup";
 
 // variables
 var w  = window;
@@ -36,8 +35,8 @@ function getTopPos(includeScroll) {
   return includeScroll ? vPos + d.scrollTop() : vPos;
 };
 
-var Popup = Component.extend({
-  pluginName: pluginName,
+var Popup = ComponentClass.extend({
+  componentName: componentName,
   initialize: function ($element, options) {
     // hide scrollbar?
     if (!options.scrollBar) {
@@ -61,14 +60,14 @@ var Popup = Component.extend({
     var $popup    = this.$element;
     this._triggerCall(o.onOpen);
     // reset current popup counts, how many popups rendered in dom view.
-    popups        = ($w.data(pluginName) || 0) + 1;
+    popups        = ($w.data(componentName) || 0) + 1;
     this.id       = prefix + popups + '__';
     fixedVPos     = o.position[1] !== 'auto';
     fixedHPos     = o.position[0] !== 'auto';
     fixedPosStyle = o.positionStyle === 'fixed';
     height        = $popup.outerHeight(true);
     width         = $popup.outerWidth(true);
-    $w.data(pluginName, popups);
+    $w.data(componentName, popups);
     o.loadUrl ? this.createContent() : this.open();
   },
   /** @public hide popup */
@@ -134,7 +133,7 @@ var Popup = Component.extend({
     }
     d.off('keydown.' + id);
     $('.popup-modal.' + id).off('click');
-    $w.off('.' + id).data(pluginName, ($w.data(pluginName) - 1 > 0) ? $w.data(pluginName) - 1 : null);
+    $w.off('.' + id).data(componentName, ($w.data(componentName) - 1 > 0) ? $w.data(componentName) - 1 : null);
     $popup.off('click.' + id, '.close, .' + o.closeClass);
   },
 
@@ -402,15 +401,15 @@ Popup.DEFAULTS = {
 };
 
 // Registerd plugin.
-Plugin(pluginName, Popup);
+createPlugin(componentName, Popup);
 
 // DOMReady.
 UI.ready(function Popup(context) {
   var $popup = $('[data-popup]', context);
 
   // auto initialize component via data-api.
-  $popup[pluginName]();
+  $popup[componentName]();
 
-}, pluginDataName);
+}, ComponentClass.getPluginInstanceName(componentName));
 
 module.exports = Popup;

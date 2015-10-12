@@ -1,12 +1,13 @@
-var ui = require('./ui');
-var { plugin, widget } = require('./plugin');
-var Component = require('./Component');
+var UI = require('./ui');
+var { createPlugin, createWidget } = require('./plugin');
+var { ComponentClass, WidgetClass } = require('./Component');
 var position = require('./position');
 
 module.exports = {
-  UI: ui,
-  Plugin: plugin,
-  Widget: widget,
-  Component: Component,
-  position: position
+  position: position,
+  UI: UI,
+  createPlugin: createPlugin,
+  createWidget: createWidget,
+  WidgetClass: WidgetClass,
+  ComponentClass: ComponentClass,
 };
