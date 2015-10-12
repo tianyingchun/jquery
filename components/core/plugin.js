@@ -22,7 +22,7 @@ var plugin = function UIPlugin(name, Component, pluginOption) {
     var args = allArgs.slice(1);
 
     // get plugin data name that used to stored plugin component instance.
-    var dataPluginInstanceName = 'ui.' + name;
+    var pluginInstanceName = 'ui.' + name;
 
     // default data store via data-pluginName='{"":""}'
     var dataOptionName = pluginOption.dataOptionName || name;
@@ -30,7 +30,7 @@ var plugin = function UIPlugin(name, Component, pluginOption) {
     var $set = this.each(function () {
 
       var $this = $(this);
-      var instance = $this.data(dataPluginInstanceName);
+      var instance = $this.data(pluginInstanceName);
 
       // <div data-pluginName='{"name":"value"}'></div>
       var attrDataOption = $this.data(dataOptionName);
@@ -43,7 +43,7 @@ var plugin = function UIPlugin(name, Component, pluginOption) {
 
       if (!instance) {
         // Component plugin API: constructor(element, options);
-        $this.data(dataPluginInstanceName, (instance = new Component(this, options)));
+        $this.data(pluginInstanceName, (instance = new Component(this, options)));
       }
 
       // custom method call while instance has been ready.

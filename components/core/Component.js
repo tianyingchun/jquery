@@ -22,7 +22,7 @@ Component.prototype = {
     if (!this.pluginName) {
       throw Error('you must provider `pluginName` property for your Component!');
     }
-    var _pluginDataName = this.getDataPluginInstanceName();
+    var _pluginDataName = this.getPluginInstanceName();
 
     if (!$element.data(_pluginDataName)) {
       $element.data(_pluginDataName, this);
@@ -46,7 +46,7 @@ Component.prototype = {
     throw new Error('the initialize() should be implemented!');
   },
   _destroy: function () {
-    this.$element.data(this.getDataPluginInstanceName(), null);
+    this.$element.data(this.getPluginInstanceName(), null);
     this.$element.data(this.pluginName, null);
   },
   //@override.
@@ -56,7 +56,7 @@ Component.prototype = {
   },
   //@public
   // get plugin data name that used to stored plugin component instance.
-  getDataPluginInstanceName: function () {
+  getPluginInstanceName: function () {
     return 'ui.' + this.pluginName;
   }
 };

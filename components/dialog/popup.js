@@ -43,8 +43,10 @@ var Popup = Component.extend({
     if (!options.scrollBar) {
       $('html').css('overflow', 'hidden');
     }
-    // initialize.
-    this._init();
+    // show dialog while initialization.
+    if (options.domReadyShow) {
+      this.show();
+    }
   },
   destroy: function () {
     console.log('popup.destroy()');
@@ -53,7 +55,8 @@ var Popup = Component.extend({
     // unbind events.
     this._unbindEvents();
   },
-  _init: function () {
+  /** @public show popup */
+  show: function () {
     var o         = this.options;
     var $popup    = this.$element;
     this._triggerCall(o.onOpen);
@@ -67,6 +70,26 @@ var Popup = Component.extend({
     width         = $popup.outerWidth(true);
     $w.data(pluginName, popups);
     o.loadUrl ? this.createContent() : this.open();
+  },
+  /** @public hide popup */
+  close: function () {
+    var $popup = this.$element;
+    var o      = this.options;
+    var id     = this.id;
+    if (o.modal) {
+      $('.popup-modal.' + id).fadeTo(o.speed, 0, function () {
+        $(this).remove();
+      });
+    }
+    // Clean up events.
+    this._unbindEvents();
+
+    clearTimeout(autoCloseTO);
+
+    // Close trasition
+    this.doTransition();
+
+    return false; // Prevent default
   },
   _bindEvents: function () {
     var $popup = this.$element;
@@ -205,25 +228,6 @@ var Popup = Component.extend({
       });
 
     this.doTransition(true);
-  },
-  close: function () {
-    var $popup = this.$element;
-    var o      = this.options;
-    var id     = this.id;
-    if (o.modal) {
-      $('.popup-modal.' + id).fadeTo(o.speed, 0, function () {
-        $(this).remove();
-      });
-    }
-    // Clean up
-    this.destroy();
-
-    clearTimeout(autoCloseTO);
-
-    // Close trasition
-    this.doTransition();
-
-    return false; // Prevent default
   },
   reposition: function (animateSpeed) {
     var $popup        = this.$element;
@@ -365,6 +369,8 @@ var Popup = Component.extend({
 // The default configurations.
 Popup.DEFAULTS = {
   amsl: 50,
+  // the value indicate if we auto open popup dialog while DOMReady.
+  domReadyShow: false,
   appending: true,
   appendTo: 'body',
   autoClose: false,
