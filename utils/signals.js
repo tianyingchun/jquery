@@ -1,4 +1,4 @@
-var $ = require('jquery');
+var jQuery = require('jquery');
 // http://api.jquery.com/jQuery.Callbacks/
 // cache all topics.
 var topics = {};
@@ -19,7 +19,7 @@ var topics = {};
  *    Signals.get("mailArrived" ).subscribe( fn1 );
  *
  *    // Create a new instance of Deferreds
- *    var dfd = $.Deferred();
+ *    var dfd = jQuery.Deferred();
  *
  *    // Define a new topic (without directly publishing)
  *    var topic = Signals.get("mailArrived");
@@ -41,7 +41,7 @@ module.exports = {
   get: function (id) {
     var topic = id && topics[id];
     if (!topic) {
-      var callbacks = $.Callbacks();
+      var callbacks = jQuery.Callbacks();
       topic = {
         broadcast: callbacks.fire,
         subscribe: callbacks.add,

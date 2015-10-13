@@ -103,7 +103,7 @@ $(function () {
     watcher.callback(document);
   });
 
-  $html.removeClass('no-js').addClass('js');
+  // $html.removeClass('no-js').addClass('js');
 
 });
 

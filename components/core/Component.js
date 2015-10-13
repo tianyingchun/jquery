@@ -1,5 +1,5 @@
 var extend = require('../../utils/extend');
-
+var signals = require('../../utils/signals');
 /**
  * Design jquery component plugin system.
  * The Plugin should be as an individual common web component hehaviors.
@@ -27,7 +27,7 @@ Component.prototype = {
 
     if (!$element.data(_pluginDataName)) {
       $element.data(_pluginDataName, this);
-      console.log('component `' + this.componentName + '`initialize()....', $element, options);
+      console.debug('component `' + this.componentName + '`initialize()....', $element, options);
       // invoke child component initialize methods.
       this.initialize($element, options);
     }
@@ -83,6 +83,14 @@ Component.getPluginInstanceName = function (componentName) {
 var Widget = Component.extend({
   getComponentBasicClassNames: function () {
     return this.componentName + ' widget-' + this.componentName;
+  },
+  /**
+   * Broadcast message to other modules.
+   * @param  {object} message the message
+   */
+  broadcast: function (message) {
+    console.debug('[broadcast]: topicName: `%s`, message: ',this.componentName, message);
+    signals.get(this.componentName).broadcast(message);
   }
 });
 
