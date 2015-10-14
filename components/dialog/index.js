@@ -1,6 +1,6 @@
 var Popup = require('./popup');
-var alert = require('./alert');
+var dialog = require('./dialog');
 module.exports = {
   Popup: Popup,
-  alert: alert
+  dialog: dialog
 };

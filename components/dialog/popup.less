@@ -26,26 +26,26 @@
   color: #111;
   display: none;
   position: absolute;
-  min-width: 450px;
+  min-width: 400px;
   min-height: 200px;
   .loading {
     // background: url('@{imageCDN}images/dialog/loader.gif') center center no-repeat
   }
   iframe {
     // background: url('@{imageCDN}images/dialog/loader.gif') center center no-repeat;
-    min-height: 240px;
-    min-width: 450px
+    min-height: 100px;
+    min-width: 400px
   }
   &:focus {
     outline: 0;
   }
 }
 
-&popup-hd {
+.popup-hd {
   padding: 0 20px;
   font-size: 1.4rem;
   font-weight: 500;
-  height: 45px;
+  height: 50px;
   line-height: 45px;
   padding: 0 20px;
   background: #fff;
@@ -55,44 +55,31 @@
     position: absolute;
     right: 20px;
     display: block;
-    top: 15px;
-    text-indent: -1000px;
+    top: 8px;
     width: 16px;
     height: 16px;
     cursor: pointer;
-    i {
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      width: 16px;
-      height: 16px;
-      position: absolute;
-      // background:url('@{imageCDN}images/dialog/close.png') center center no-repeat;
-    }
-    &:hover i {
-      // background-image: url('@{imageCDN}images/dialog/close-hover.png');
-    }
   }
 }
 
-&popup-bd {
-  height: 310px;
+.popup-bd {
+  height: 100px;
   overflow-y: auto;
   overflow-x: hidden;
   background-color: #FFFFFF;
-  width: 560px;
+  width: 400px;
   text-align: center;
   .content {
     padding: 20px;
   }
 }
 
-&popup-footer {
+.popup-footer {
   padding: 0 20px;
   border-top: 1px solid @popup-border-color;
   text-align: right;
-  height: 65px;
-  line-height: 65px;
+  height: 50px;
+  line-height: 50px;
   overflow: hidden;
   border-collapse: collapse;
 }
@@ -101,12 +88,12 @@
 // dialogs
 // ---------------------------------------------------------
 //
-&popup-dialog {
+.popup-dialog {
   border-radius: 2px;
   background: #f8f8f8;
 }
 
-&popup-alert {}
+.popup-alert {}
 
-&popup-confirm {}
+.popup-confirm {}
 
