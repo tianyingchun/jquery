@@ -1,86 +1,176 @@
 var $ = require("jquery");
 var template = require("../../utils/template");
-var popup = require("./popup");
+var {
+  UI, createPlugin, ComponentClass
+} = require('../core');
+var Popup = require("./popup");
 
-var dialogTpl =
-  '<div id="ui-popup" class="ui-popup <%=dialogClass%>">' +
-  ' <div class="ui-popup-dialog">' +
+var componentName = 'alert';
+var alertTpl =
+  '<div class="popup popup-alert <%=classes%>">' +
+  ' <div class="popup-dialog">' +
   '   <% if(header) { %>  ' +
-  '     <div class="ui-popup-hd">' +
+  '     <div class="popup-hd">' +
   '     <%=header.html %>' +
   '     <% if(header.showClose) { %>  ' +
-  '       <span class="ui-close"><i></i>X</span>' +
+  '       <span class="close"><i></i>X</span>' +
   '     <% }%>  ' +
   '   </div>' +
   '   <% }%>  ' +
-  '     <div class="ui-popup-bd">' +
+  '     <div class="popup-bd">' +
   '         <%=body %>' +
   '     </div>' +
   '   <% if(footer) { %>  ' +
-  '     <div class="ui-popup-footer">' +
+  '     <div class="popup-footer">' +
   '         <%:= footer.html%>' +
   '     </div>' +
   '   <% } %> ' +
   ' </div>' +
   '</div>';
 
-var template = template(dialogTpl);
+var Alert = ComponentClass.extend({
+  componentName: componentName,
 
-//
-// Normally we should not need to pass popupElm, except your speical requirement.
-function Alert(popupElm, options) {
-  if (arguments.length == 1) {
-    options = popupElm;
-    popupElm = null;
-  }
-  var o = $.extend({}, Alert.DEFAULTS, options);
-  var $popup = popupElm && $(popupElm) || null;
-  // maybe sometimes we need  to customized dialog popup element.
-  if (!$popup || !$popup.size()) {
-    var $body = $("body");
-    var $popup = $body.find("#ui-popup");
+  initialize: function () {
+    this.$element = $(template(alertTpl, this.options));
+    this.$popup = new Popup(this.$element, this.getPopupOptions());
+    this._bindEvents();
+  },
 
-    if (!$popup.size()) {
-      $popup = $(template(o)).appendTo($body);
+  destroy: function () {
+    this._destroy();
+    this._unbindEvents();
+    this.$popup = null;
+    this.$element.remove();
+  },
+
+  getPopupOptions: function () {
+    var o = this.options;
+    var popupOpts = {
+      onOpen: this.bind(function () {
+        this._triggerCall(o.onOpen)
+      }),
+      onClose: this.bind(function () {
+        this._triggerCall(o.onClose);
+        this.destroy();
+      }),
+      modal: o.modal,
+      modalClose: o.modalClose,
+      autoClose: o.autoClose,
+      scrollBar: false
+    };
+    return popupOpts;
+  },
+
+  show: function () {
+    if (this.$popup) {
+      this.$popup.show();
     }
-  }
+  },
+  close: function () {
+    if (this.$popup) {
+      this.$popup.close();
+      this.destroy();
+    }
+  },
 
-  function triggerCall(func, arg) {
-    $.isFunction(func) && func.call($popup, arg);
-  };
-  var popupOpts = {
-    onOpen: o.onOpen,
-    onClose: function () {
-      // unbind some events.
-      this.off("click");
-      triggerCall(o.onClose);
-    },
-    modalClose: o.modalClose,
-    scrollBar: false
-  };
-  // show popup. and delegate click event for all child element with class '.trigger'
-  return $popup.popup(popupOpts).on("click", "[data-trigger]", function () {
-    // capture all .trigger click events.
-    triggerCall(o.onBtnClicked, $(this).data("trigger"));
-  });
-};
+  _triggerCall: function (func, arg) {
+    $.isFunction(func) && func.call(this.$popup, arg);
+  },
+
+  _bindEvents: function () {
+    var options = this.options;
+    var triggerCall = this.bind(this._triggerCall);
+    this.$element.on('click', '[data-trigger]', function (e) {
+      triggerCall(options.onActionClicked, $(this));
+    });
+  },
+
+  _unbindEvents: function () {
+    this.$element.off('click');
+  }
+});
+
 Alert.DEFAULTS = {
   onOpen: false,
   onClose: false,
-  onBtnClicked: false,
+  onActionClicked: false,
   autoClose: false,
+  modal: true,
   modalClose: false,
-  dialogClass: "dialog-alert",
+  classes: "",
   // if equals false, don't show header.
   header: {
     showClose: true,
-    html: "Your sHeader"
+    html: "Your Header"
   },
   body: "Your dialog body",
   // if equals false, don't show footer.
   footer: {
-    html: '<button class="ui-popup-btn" data-trigger="ok">确定</button>'
+    html: '<button class="popup-btn" data-trigger="ok">确定</button>'
   }
 };
 
-module.exports = Alert;
+function alert(options) {
+  var DEFAULTS = {
+    onOpen: false,
+    onClose: false,
+    onActionClicked: false,
+    autoClose: false,
+    modal: true,
+    modalClose: false,
+    classes: "",
+    // if equals false, don't show header.
+    header: {
+      showClose: true,
+      html: "Your Header"
+    },
+    body: "Your dialog body",
+    // if equals false, don't show footer.
+    footer: {
+      html: '<button class="popup-btn" data-trigger="ok">确定</button>'
+    }
+  };
+
+  var o = $.extend({}, DEFAULTS, options);
+
+  var $element = $(template(alertTpl, o));
+
+  // the options of popup.
+  var popupOptions = {
+    onOpen: function () {
+      triggerCall(o.onOpen);
+      bindEvent(this);
+    },
+    onClose: function () {
+      triggerCall(o.onClose);
+      unbindEvents(this);
+    },
+    modal: o.modal,
+    modalClose: o.modalClose,
+    autoClose: o.autoClose,
+    scrollBar: false
+  };
+
+  var popupInstance = new Popup($element, popupOptions).show();
+
+  function triggerCall(func, arg) {
+    $.isFunction(func) && func.call(popupInstance, arg);
+  };
+
+  function bindEvent(popup) {
+    popup.$element.on('click', '[data-trigger]', function (e) {
+      triggerCall(o.onActionClicked, $(this));
+    });
+  }
+
+  function unbindEvents(popup) {
+    popup.$element.off('click');
+  }
+
+}
+
+module.exports = function (options) {
+  // show popup and return instance.
+  alert(options);
+};

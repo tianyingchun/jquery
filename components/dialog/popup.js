@@ -69,6 +69,7 @@ var Popup = ComponentClass.extend({
     width         = $popup.outerWidth(true);
     $w.data(componentName, popups);
     o.loadUrl ? this.createContent() : this.open();
+    return this;
   },
   /** @public hide popup */
   close: function () {
