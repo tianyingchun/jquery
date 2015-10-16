@@ -65,10 +65,20 @@ var Dropdown = ComponentClass.extend({
           $launcher.data('timeoutId', setTimeout(this.bind(this.close), 200));
         }
       }));
+      // cache.
+      this.allDropdowns.push(this);
   },
+  allDropdowns: [],
   open: function () {
     var self = this;
     var options = self.options;
+    if (options.closeOthers) {
+      $.each(this.allDropdowns, function (i, dropdown) {
+        if (dropdown !== self) {
+          dropdown.close();
+        }
+      });
+    }
     if (options.toggleLauncher) {
       self.$launcher.addClass('active');
     }
@@ -95,6 +105,7 @@ var Dropdown = ComponentClass.extend({
     this._destroy();
     this.$launcher.off('click').off('mouseenter').off('mouseleave');
     this.$launcherTarget.off('click').off('mouseenter').off('mouseleave').off('onSelect');
+    this.allDropdowns.length = 0;
   }
 });
 
@@ -103,7 +114,7 @@ Dropdown.DEFAULTS = {
   launcherSelector: ".dropdown-toggle",
   launcherTargetContainerSelector: ".dropdown-content",
   menuItemSelector: "li",
-
+  closeOthers: true,
   my_position: 'left top',
   at_position: 'left bottom',
 
