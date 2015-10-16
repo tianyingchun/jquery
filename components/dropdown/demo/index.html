@@ -2,21 +2,42 @@
 <html>
 
 <head>
-  <title>The dropdown demo</title>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <link name="common" rel="stylesheet" type="text/css" href="http://localhost:4001/shared/less/public/themes/tongcheng-pc/common.css">
+  <link name="bundle" rel="stylesheet" type="text/css" href="http://localhost:3001/public/testp1/home/bundle.css">
+  <title>the dropdown demo</title>
 </head>
 
 <body>
-  <div class="dropdown" data-dropdown>
-    <button class="btn btn-primary dropdown-toggle" data-dropdown-toggle>下拉列表 <span class="icon-caret-down"></span></button>
-    <ul class="dropdown-content">
-      <li class="dropdown-header">标题</li>
-      <li><a href="#">快乐的方式不只一种</a></li>
-      <li class="active"><a href="#">最荣幸是</a></li>
-      <li><a href="#">谁都是造物者的光荣</a></li>
-      <li class="disabled"><a href="#">就站在光明的角落</a></li>
+  <script src="http://localhost:4001/public/vendors/jquery/jquery.js"></script>
+  <script src="http://localhost:3001/public/testp1/home/bundle.js"></script>
+  <div class="dropdown plugin-dropdown" data-dropdown="{&quot;menuAlwaysOpen&quot;: true,&quot;my_position&quot;:&quot;left+10 top+10&quot;}">
+    <div class="launcher-container">
+      <button class="btn btn-primary dropdown-toggle">Select another</button>
+    </div>
+    <ul class="dropdown-content" style="display: none; top: 41px; left: 10px;">
+      <li data-value="opt_2.1"><a href="javascript:void(0);">Option-2.1</a></li>
+      <li data-value="opt_2.2"><a href="javascript:void(0);">Option-2.2</a></li>
       <li class="divider"></li>
-      <li><a href="#">天空海阔 要做最坚强的泡沫</a></li>
+      <li data-value="opt_2.3"><a href="javascript:void(0);">Option-2.3</a></li>
     </ul>
+  </div>
+  <hr>
+  <div class="dropdown plugin-dropdown" data-dropdown="{&quot;menuAlwaysOpen&quot;: true, &quot;launchOnMouseEnter&quot;: true,&quot;my_position&quot;:&quot;left+10 top+10&quot;}">
+    <div class="launcher-container">
+      <button class="btn btn-primary dropdown-toggle">Select another</button>
+    </div>
+    <ul class="dropdown-content" style="display: none; top: 40.625px; left: 10px;">
+      <li data-value="opt_2.1"><a href="javascript:void(0);">Option-2.1</a></li>
+      <li data-value="opt_2.2"><a href="javascript:void(0);">Option-2.2</a></li>
+      <li class="divider"></li>
+      <li data-value="opt_2.3"><a href="javascript:void(0);">Option-2.3</a></li>
+    </ul>
+  </div>
   </div>
 </body>
 

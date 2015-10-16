@@ -8,7 +8,7 @@ var signals = require('../../utils/signals');
  * @param {DOMNode|String} element the dom selector or dom object or jquery object
  * @param {Object} options the plugin configuration.
  */
-function Component(element, options) {
+function Component (element, options) {
   this.$element = $(element).addClass(this.getComponentBasicClassNames());
   this.options = $.extend({}, this.constructor.DEFAULTS, options);
   // internal initialize component.
