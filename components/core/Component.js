@@ -9,8 +9,8 @@ var signals = require('../../utils/signals');
  * @param {Object} options the plugin configuration.
  */
 function Component (element, options) {
-  this.$element = $(element).addClass(this.getComponentBasicClassNames());
   this.options = $.extend({}, this.constructor.DEFAULTS, options);
+  this.$element = $(element).addClass(this.getComponentClassNames());
   // internal initialize component.
   this._initialize.call(this, this.$element, this.options);
 }
@@ -23,8 +23,9 @@ Component.prototype = {
     if (!this.componentName) {
       throw Error('you must provider `componentName` property for your Component!');
     }
-    var _pluginDataName = this.getPluginInstanceName();
+    var _pluginDataName = this._getInternalInstanceName();
 
+    // allow us directly new Componnet($element, options) instead using
     if (!$element.data(_pluginDataName)) {
       $element.data(_pluginDataName, this);
       console.debug('component `' + this.componentName + '`initialize()....', $element, options);
@@ -37,7 +38,7 @@ Component.prototype = {
     throw new Error('the initialize() should be implemented!');
   },
   _destroy: function () {
-    this.$element.data(this.getPluginInstanceName(), null);
+    this.$element.data(this._getInternalInstanceName(), null);
     this.$element.data(this.componentName, null);
   },
   //@override.
@@ -55,19 +56,29 @@ Component.prototype = {
     var args = [fn, context || this].concat(Array.prototype.slice.call(arguments, 2));
     return $.proxy.apply($.proxy, args);
   },
-  //@public
-  // get plugin data name that used to stored plugin component instance.
-  getPluginInstanceName: function () {
-    return this.constructor.getPluginInstanceName(this.componentName);
+
+  // @private e.g. __ui.dropdown, __ui.widget.header. .....
+  _getInternalInstanceName: function () {
+    return '__' + this.getInstanceName();
   },
-  getComponentBasicClassNames: function () {
+  // @public
+  // get plugin data name that used to stored plugin component instance.
+  getInstanceName: function () {
+    return this.constructor.getInstanceName(this.componentName);
+  },
+
+  // @public
+  // get component basic classnames used to flat the component name, component type(plugin, widget).
+  getComponentClassNames: function () {
     return this.componentName +' plugin-' + this.componentName;
   }
 };
 
+// static method: provider extend method to Component
 Component.extend = extend;
-// static methods.
-Component.getPluginInstanceName = function (componentName) {
+
+// static method: get the `name` that used to cache component instance to dom.data('name')
+Component.getInstanceName = function (componentName) {
   if (componentName) {
     return 'ui.' + componentName;
   } else {
@@ -81,7 +92,7 @@ Component.getPluginInstanceName = function (componentName) {
  *
  */
 var Widget = Component.extend({
-  getComponentBasicClassNames: function () {
+  getComponentClassNames: function () {
     return this.componentName + ' widget-' + this.componentName;
   },
   /**
@@ -95,7 +106,7 @@ var Widget = Component.extend({
 });
 
 // static methods.
-Widget.getPluginInstanceName = function (componentName) {
+Widget.getInstanceName = function (componentName) {
   if (componentName) {
     return 'ui.widget.' + componentName;
   } else {

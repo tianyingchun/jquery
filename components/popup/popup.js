@@ -411,6 +411,6 @@ UI.ready(function Popup(context) {
   // auto initialize component via data-api.
   $popup[componentName]();
 
-}, ComponentClass.getPluginInstanceName(componentName));
+}, ComponentClass.getInstanceName(componentName));
 
 module.exports = Popup;

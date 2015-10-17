@@ -4,10 +4,14 @@ var { ComponentClass, WidgetClass } = require('./Component');
 var position = require('./position');
 
 module.exports = {
-  position: position,
   UI: UI,
+  position: position,
+
+  // For atomic components.
   createPlugin: createPlugin,
-  createWidget: createWidget,
-  WidgetClass: WidgetClass,
   ComponentClass: ComponentClass,
+
+  // For biz widgets.
+  createWidget: createWidget,
+  WidgetClass: WidgetClass
 };

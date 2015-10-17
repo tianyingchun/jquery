@@ -66,9 +66,11 @@ function triggerCall(func, arg) {
 
 function dialog(type, options) {
 
+  var containerClass = '.' + type;
+
   var o = $.extend({type: type}, DEFAULTS, options);
 
-  var $element = $(type);
+  var $element = $(containerClass);
   if (!$element.size()) {
     $element = $(template(alertTpl, o)).appendTo($("body"));
   }

@@ -104,7 +104,7 @@ $(document).on('click.button.data-api', '[data-button]', function (e) {
 
 UI.ready(function (context) {
   $('[data-button]', context).button();
-}, ComponentClass.getPluginInstanceName(componentName));
+}, ComponentClass.getInstanceName(componentName));
 
 
 module.exports = Button;

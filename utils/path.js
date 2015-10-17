@@ -25,9 +25,9 @@ var path = {
    * @return {String}       the final path
    */
   getUrl: function (path, query) {
-    const port = url('port'); // 443, 80.
-    const hostname = url('hostname');
-    const protocol = url('protocol');
+    var port = url('port'); // 443, 80.
+    var hostname = url('hostname');
+    var protocol = url('protocol');
     var finalPath;
     var isHttpUrl = new RegExp('(https|http|ftp)?://');
     if (isHttpUrl.test(path)) {

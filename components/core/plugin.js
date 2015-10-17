@@ -38,7 +38,7 @@ function UIComponent(type, name, Component, pluginOption) {
     var args = allArgs.slice(1);
 
     // get plugin data name that used to stored plugin component instance.
-    var componentInstanceName = (type === 'widget' ? 'ui.widget.' : 'ui.') + name;
+    var componentInstanceName = (type === 'widget' ? '__ui.widget.' : '__ui.') + name;
 
     // default data store via data-pluginName='{"":""}'
     var dataOptionName = pluginOption.dataOptionName || name;
@@ -50,6 +50,7 @@ function UIComponent(type, name, Component, pluginOption) {
 
       // <div data-pluginName='{"name":"value"}'></div>
       var attrDataOption = $this.data(dataOptionName);
+
       var options = $.extend({}, typeof attrDataOption === 'object' && attrDataOption, typeof option === 'object' && option);
       if (!instance && option === 'destroy') return;
 

@@ -12,27 +12,36 @@ var $body = $('body');
 $.extend($.fn, {
   /**
    * Get the component instance of current dom plguin.
-   * @param  {String} pluginName the current `Component` plugin name.
+   * @param  {String} pluginName the current `Component`,`Widget` plugin name.
+   *                             e.g. 'dropdown','popup'.
    * @return {Object}            the instance of `Component`
    */
-  getPluginInstance: function (pluginName) {
+  getInstance: function (pluginName) {
+    var $this = $(this);
     if (pluginName) {
-      return $(this).data('ui.' + pluginName);
+      return $this.data('__ui.' + pluginName);
+    } else {
+      var data = $this.data();
+      var instances = [];
+
+      if (data) {
+        $.each(data, function (key, value) {
+          if (key && key.indexOf('__ui.') === 0) {
+            instances.push(value);
+          }
+        });
+      }
+
+      // maybe widget, maybe plugin.
+      if (instances.length == 1) {
+        return instances[0];
+      } else if(instances.length > 1){
+        console.warn('you have bind multi plugin behaviors must provider `<pluginName>` formatter: `ui.<pluginName>`');
+        return instances;
+      } else {
+        return null;
+      }
     }
-    console.warn('you must provider `<pluginName>` formatter: `ui.<pluginName>`');
-    return null;
-  },
-  /**
-   * Get the `widget` instance of current dom.
-   * @param  {String} widgetName the current `Widget` plugin name.
-   * @return {Object}            the instance of `Widget`
-   */
-  getWidgetInstance: function (widgetName) {
-    if (widgetName) {
-      return $(this).data('ui.widget.' + widgetName);
-    }
-    console.warn('you must provider `<widgetName>` formatter: `ui.widget.<widgetName>`');
-    return null;
   }
 });
 
