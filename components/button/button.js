@@ -23,6 +23,14 @@ var Button = ComponentClass.extend({
       options.resetText = $element[val]();
     }
 
+    if (UI.support.animation && options.spinner &&
+      val === 'html' && !this.hasSpinner) {
+      options.loadingText = '<i class="glyph-icon glyph-' + options.spinner +
+        ' glyph-spin"></i> ' + options.loadingText;
+
+      this.hasSpinner = true;
+    }
+
     stateText = stateText ||
       (data[state] === undefined ? options[state] : data[state]);
 
