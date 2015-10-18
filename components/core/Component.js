@@ -9,6 +9,9 @@ var signals = require('../../utils/signals');
  * @param {Object} options the plugin configuration.
  */
 function Component (element, options) {
+  if (!element) {
+    throw Error('you must provider `element` parameter for Component `' + this.componentName + '`!');
+  }
   this.options = $.extend({}, this.constructor.DEFAULTS, options);
   this.$element = $(element).addClass(this.getComponentClassNames());
   // internal initialize component.
@@ -79,6 +82,7 @@ Component.extend = extend;
 
 // static method: get the `name` that used to cache component instance to dom.data('name')
 Component.getInstanceName = function (componentName) {
+  componentName = componentName || this.prototype.componentName;
   if (componentName) {
     return 'ui.' + componentName;
   } else {
@@ -97,16 +101,18 @@ var Widget = Component.extend({
   },
   /**
    * Broadcast message to other modules.
-   * @param  {object} message the message
+   * @param  {object} message the message requrired : {type:'eventName', data: {}};
    */
   broadcast: function (message) {
-    console.debug('[broadcast]: topicName: `%s`, message: ',this.componentName, message);
-    signals.get(this.componentName).broadcast(message);
+    var topicName = this.getInstanceName();
+    console.debug('[broadcast]: topicName: `%s`, message: ', topicName, message);
+    signals.get(topicName).broadcast(message);
   }
 });
 
 // static methods.
 Widget.getInstanceName = function (componentName) {
+  componentName = componentName || this.prototype.componentName;
   if (componentName) {
     return 'ui.widget.' + componentName;
   } else {

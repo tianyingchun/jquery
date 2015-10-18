@@ -146,6 +146,6 @@ UI.ready(function dropdown(context) {
   var $dropdown = $('[data-dropdown]', context);
   // auto initialize component via data-api.
   $dropdown[componentName]();
-}, ComponentClass.getInstanceName(componentName));
+}, Dropdown.getInstanceName(componentName));
 
 module.exports = Dropdown;
