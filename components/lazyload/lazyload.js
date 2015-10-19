@@ -6,8 +6,10 @@ require('./lazyload.less');
 var $ = require('jquery');
 var { UI, createPlugin, ComponentClass } = require('../core');
 var componentName = "lazyload";
-
-function emptyFn () {}
+var lang = require('../../utils/lang');
+var w = window;
+var $window = $(w);
+var emptyFn = lang.noop;
 
 function belowthefold($element, options) {
   var fold;
@@ -104,7 +106,7 @@ function checkAppear($elements, options) {
 // Remove image from array so it is not looped next time.
 function getUnloadElements($elements) {
   return $elements.filter(function (i, e) {
-    return !$elements.eq(i)._lazyload_loadStarted;
+    return !$elements.eq(i).data('_lazyload_loadStarted');
   });
 }
 
@@ -145,47 +147,64 @@ var Lazyload = ComponentClass.extend({
   /** @override */
   initialize: function ($element, options) {
 
-    this.$lazyImages = $element.find(options.lazy_item_selector);
+    var $lazyElements = this.$lazyImages = $element.find(options.lazy_item_selector);
 
     // option converter.
     this._parseOptions(options);
 
-    this.isScrollEvent = options.event == 'scroll';
+    var isScrollEvent = this.isScrollEvent = options.event == 'scroll';
+
     // isScrollTypeEvent cantains custom scrollEvent . Such as 'scrollstart' & 'scrollstop'
     // https://github.com/search?utf8=%E2%9C%93&q=scrollstart
     this.isScrollTypeEvent = isScrollEvent || options.event == 'scrollstart' || options.event == 'scrollstop';
 
-    this.throttleCheckAppear = options.check_appear_throttle_time == 0 ?
-      checkAppear : throttle(checkAppear, options.check_appear_throttle_time);
+    var throttleCheckAppear = this.throttleCheckAppear =
+      options.check_appear_throttle_time == 0
+      ? checkAppear
+      : throttle(checkAppear, options.check_appear_throttle_time);
 
     // lazyload pictures.
-    this._lazy();
+    this.doLazyLoading();
 
+    // Check if something appears when window is resized.
+    // Force initial check if images should appear when window is onload.
+    $window.on('resize load', function () {
+      throttleCheckAppear($lazyElements, options);
+    });
+
+    // Force initial check if images should appear.
+    $(function () {
+      throttleCheckAppear($lazyElements, options);
+    });
   },
-  // @private
-  _lazy: function () {
+  // @public
+  doLazyLoading: function () {
     var $elements = this.$lazyImages;
     var isScrollTypeEvent = this.isScrollTypeEvent;
     var isScrollEvent = this.isScrollEvent;
     var throttleCheckAppear = this.throttleCheckAppear;
+    var options = this.options;
 
     $elements.each(function (i, e) {
-      var element = this,
-        $element = $elements.eq(i),
-        placeholderSrc = $element.attr('src'),
-        originalSrcInAttr = $element.attr('data-' + options.data_attribute), // `data-original` attribute value
-        originalSrc = options.url_rewriter_fn == emptyFn ?
-        originalSrcInAttr :
-        options.url_rewriter_fn.call(element, $element, originalSrcInAttr),
-        originalSrcset = $element.attr('data-' + options.data_srcset_attribute),
-        isImg = $element.is('img')
+      var element = this;
+      var $element = $elements.eq(i);
+      var placeholderSrc = $element.attr('src');
+      var originalSrcInAttr = $element.attr('data-' + options.data_attribute); // `data-original` attribute value
+      var originalSrc = options.url_rewriter_fn == emptyFn ?
+          originalSrcInAttr :
+          options.url_rewriter_fn.call(element, $element, originalSrcInAttr);
 
-      if ($element._lazyload_loadStarted == true || placeholderSrc == originalSrc) {
-        $element._lazyload_loadStarted = true;
+      var originalSrcset = $element.attr('data-' + options.data_srcset_attribute);
+      var isImg = $element.is('img');
+
+      // console.log('$element.data("_lazyload_loadStarted")', $element.data('_lazyload_loadStarted'));
+
+      if ($element.data('_lazyload_loadStarted') == true || placeholderSrc == originalSrc) {
+        $element.data('_lazyload_loadStarted', true);
         $elements = getUnloadElements($elements);
         return;
       }
-      $element._lazyload_loadStarted = false;
+      $element.data('_lazyload_loadStarted', false);
 
       // If element is an img and no src attribute given, use placeholder.
       if (isImg && !placeholderSrc) {
@@ -194,7 +213,6 @@ var Lazyload = ComponentClass.extend({
           $element.attr('src', options.placeholder_real_img);
         }).attr('src', options.placeholder_data_img);
       }
-
 
       // When appear is triggered load original image.
       $element.one('_lazyload_appear', function () {
@@ -223,13 +241,15 @@ var Lazyload = ComponentClass.extend({
             $element[options.effect].apply($element, effectParamsIsArray ? options.effect_params : []);
           }
           $elements = getUnloadElements($elements);
+
+          console.debug('lazyload elements: ', $elements.length);
         }
-        if (!$element._lazyload_loadStarted) {
+        if (!$element.data('_lazyload_loadStarted')) {
           effectIsNotImmediacyShow = (options.effect != 'show' && $.fn[options.effect] && (!options.effect_params || (effectParamsIsArray && options.effect_params.length == 0)));
           if (options.appear != emptyFn) {
             options.appear.call(element, $element, $elements.length, options);
           }
-          $element._lazyload_loadStarted = true;
+          $element.data('_lazyload_loadStarted', true);
           if (options.no_fake_img_loader || originalSrcset) {
             if (options.load != emptyFn) {
               $element.one('load', function () {
@@ -241,7 +261,7 @@ var Lazyload = ComponentClass.extend({
             $('<img />').one('load', function () { // `on` -> `one` : IE6 triggered twice load event sometimes
               loadFunc();
               if (options.load != emptyFn) {
-                options.load.call(element, $elements.length, options);
+                options.load.call(element, $element, $elements.length, options);
               }
             }).attr('src', originalSrc);
           }
@@ -250,8 +270,8 @@ var Lazyload = ComponentClass.extend({
       // When wanted event is triggered load original image
       // by triggering appear.
       if (!isScrollTypeEvent) {
-        $element.on(options.event, function () {
-          if (!$element._lazyload_loadStarted) {
+        $element.off(options.event).on(options.event, function () {
+          if (!$element.data('_lazyload_loadStarted')) {
             $element.trigger('_lazyload_appear');
           }
         });
@@ -259,29 +279,23 @@ var Lazyload = ComponentClass.extend({
     });
     // Fire one scroll event per scroll. Not one scroll event per image.
     if (isScrollTypeEvent) {
-      options._$container.on(options.event, function () {
-        throttleCheckAppear($elements, options)
+      options._$container.off(options.event).on(options.event, function () {
+        throttleCheckAppear($elements, options);
       });
     }
 
-    // Check if something appears when window is resized.
-    // Force initial check if images should appear when window is onload.
-    $window.on('resize load', function () {
-      throttleCheckAppear($elements, options)
-    });
-
-    // Force initial check if images should appear.
-    $(function () {
-      throttleCheckAppear($elements, options)
-    });
-
     return this;
+  },
+  // @override
+  setOptions: function (options) {
+    this.options = $.extend(this.options, options);
+    this._parseOptions(this.options);
   },
   // @private
   _parseOptions: function (options) {
     $.each(options, function (k, v) {
       if ($.inArray(k, ['threshold', 'failure_limit', 'check_appear_throttle_time']) != -1) { // these params can be a string
-        if (type(options[k]) == 'String') {
+        if (lang.isString(options[k])) {
           options[k] = parseInt(options[k], 10);
         } else {
           options[k] = v;
@@ -319,7 +333,7 @@ Lazyload.DEFAULTS = {
   event: 'scroll',
   effect: 'show',
   effect_params: null,
-  container: w,
+  container: window,
   data_attribute: 'original',
   data_srcset_attribute: 'original-srcset',
   skip_invisible: true,

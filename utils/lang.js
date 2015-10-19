@@ -23,7 +23,7 @@ var _ = {
 };
 
 // Add some isType methods: isArguments, isFunction, isString, isNumber, isDate, isRegExp, isError.
-jQuery.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function (idx, nmae) {
+jQuery.each(['Arguments', 'Function', 'String', 'Number', 'Date', 'RegExp', 'Error'], function (idx, name) {
   _['is' + name] = function (obj) {
     return toString.call(obj) === '[object ' + name + ']';
   };
