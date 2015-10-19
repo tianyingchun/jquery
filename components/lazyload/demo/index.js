@@ -89,7 +89,16 @@ function renderSample1() {
     '  <img class="lazy img-responsive" data-original="img/corvette_pitstop.jpg" width="400" height="200" alt="Corvette Pitstop"><br/>\n'+
     '</div>';
 
-  let scriptCode ='';
+  let scriptCode =
+     '// optional, you can always to using getInstane() to get instance for lazyload.\n'+
+     'var $lazyload = $result.find(\'[data-lazyload]\');\n'+
+     ' UI.run(Lazyload.getInstanceName());\n'+
+     ' var instance = $lazyload.getInstance();\n'+
+     ' instance.setOptions({\n'+
+     '   load: function ($element) {\n'+
+     '     console.log($element);\n'+
+     '   }\n'+
+     ' });\n';
 
   let $result = getSampleTemplate('直接dom data api', {
     demoCode: demoCode,
