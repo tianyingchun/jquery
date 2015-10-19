@@ -27,7 +27,7 @@ function renderIntroductions() {
     '}'
   ;
 
-  $renderTo.append($(template(docIntroduce, {
+  $renderTo.html('').append($(template(docIntroduce, {
     options:options
   })));
 
