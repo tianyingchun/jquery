@@ -1,3 +1,3 @@
-var Validate = require('./validate');
+var validator = require('./validator');
 
-module.exports = Validate;
+module.exports = validator;

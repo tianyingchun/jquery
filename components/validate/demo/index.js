@@ -1,12 +1,12 @@
 var $ = require('jquery');
-var Validate = require('../index');
+var validator = require('../index');
 var { UI } = require('../../core');
 var { template } = require('../../../utils');
-var dialog = Validate.dialog;
 
 var docIntroduce =
   '<h1> jQuery form validate 组件 <a target="_blank" href="https://github.com/tianyingchun/jquery/tree/master/components/validate" title="查看组件源码"><i class="glyph-icon glyph-github2"></i></a></h1>'+
   '<p>Validate是一个轻量级jQuery表单验证组件</p>'+
+  '<p>官方文档: http://jqueryvalidation.org/validate/</p>'+
   '<p></p>'+
   '<hr />'+
   '<p>配置参数：<pre><code class="javascript"><%=options%></code></pre></p>'+
@@ -59,16 +59,20 @@ function renderSample1() {
   let $renderTo = getMountNode();
 
   let demoCode =
-    '<form class="form">\n'+
+    '<form class="form" id="form">\n'+
     '  <fieldset>\n'+
     '    <legend>表单标题</legend>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-ipt-email-1">邮件</label>\n'+
-    '      <input type="email" class="" id="doc-ipt-email-1" placeholder="输入电子邮件">\n'+
+    '      <input name="email" type="email" class="form-field" placeholder="输入电子邮件">\n'+
+    '    </div>\n'+
+    '    <div class="form-group">\n'+
+    '      <label for="doc-ipt-email-1">手机号码</label>\n'+
+    '      <input name="mobile" type="text" class="form-field" placeholder="输入手机号码">\n'+
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-ipt-pwd-1">密码</label>\n'+
-    '      <input type="password" class="" id="doc-ipt-pwd-1" placeholder="设置个密码吧">\n'+
+    '      <input name="password" type="password" class="form-field" id="doc-ipt-pwd-1" placeholder="设置个密码吧">\n'+
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-ipt-file-1">原生文件上传域</label>\n'+
@@ -145,11 +149,49 @@ function renderSample1() {
     '      <label for="doc-ta-1">文本域</label>\n'+
     '      <textarea class="" rows="5" id="doc-ta-1"></textarea>\n'+
     '    </div>\n'+
-    '    <p><button type="submit" class="btn btn-default">提交</button></p>\n'+
+    '    <p><button type="button" class="btn-submit btn btn-default">提交</button></p>\n'+
     '  </fieldset>\n'+
     '</form>';
   let scriptCode =
-    '';
+
+  'var validator = $("#form").validate({\n'+
+  '  errorElement: \'span\',\n'+
+  '  rules: {\n'+
+  '    // the `mobile` is form field name.\n'+
+  '    // <input name="mobile" maxlength="11"  required  type="text" placeholder="请填写您的真实手机，方便我们与您取得联系" />\n'+
+  '    mobile: \'isMobile\',\n'+
+  '    email: {\n'+
+  '      required: false,\n'+
+  '      email: true\n'+
+  '    },\n'+
+  '    // <input name="qq" type="text" placeholder="请填写您的QQ号，方便我们与您取得联系" />\n'+
+  '    qq: \'isQQ\'\n'+
+  '  },\n'+
+  '  // Key/value pairs defining custom messages. Key is the name of an element, value the message to display for that element.\n'+
+  '  // Instead of a plain message, another map with specific messages for each rule can be used.\n'+
+  '  messages: {\n'+
+  '    name:"请填写真实姓名",\n'+
+  '    email: "请填写正确的邮箱地址",\n'+
+  '    mobile: {\n'+
+  '      required:"请填写手机号码",\n'+
+  '      isMobile: "请填写正确的手机号码"\n'+
+  '    },\n'+
+  '    smsCode: {\n'+
+  '      required:"请填写短信验证码"//验证码错误，请重新输入\n'+
+  '    },\n'+
+  '    randomCodeInput: {\n'+
+  '      required: "请填写图片验证码"//验证码错误，请重新输入\n'+
+  '    }\n'+
+  '  }\n'+
+  '});\n'+
+  '$(".btn-submit").on("click", function () {\n'+
+  '  validator.form();\n'+
+  '  if (validator.valid()) {\n'+
+  '    $result.find(\'.output\').html(\'form is valid, you can do something.\');\n'+
+  '  } else {\n'+
+  '    $result.find(\'.output\').html(\'form is invalid\');\n'+
+  '  }\n'+
+  '});';
 
   let $result = getSampleTemplate('直接dom data api', {
     demoCode: demoCode,
@@ -158,7 +200,64 @@ function renderSample1() {
 
   $renderTo.append($result);
 
-  UI.run(Validate.getInstanceName());
+  var errorClass = 'form-error';
+  var validClass = 'form-success';
+
+  //http://jqueryvalidation.org/validate/
+  var validator = $("#form").validate({
+    errorElement: 'span',
+    errorPlacement: function(error, element) {
+      console.log(error, element);
+      element.parent('.form-group').addClass('form-error').append(error);
+    },
+    highlight: function(element, errorClass, validClass) {
+      console.log('highlight', element, errorClass, validClass)
+      $(element).parent('.form-group').addClass(errorClass).removeClass(validClass);
+      // $(element.form).find("label[for=" + element.id + "]").addClass(errorClass);
+    },
+    unhighlight: function(element, errorClass, validClass) {
+      console.log('unhighlight',element, errorClass, validClass)
+
+      $(element).parent('.form-group').removeClass(errorClass).addClass(validClass);
+      // $(element.form).find("label[for=" + element.id + "]").removeClass(errorClass);
+    },
+    rules: {
+      // the `mobile` is form field name.
+      // <input name="mobile" maxlength="11"  required  type="text" placeholder="请填写您的真实手机，方便我们与您取得联系" />
+      mobile: 'isMobile',
+      email: {
+        required: true,
+        email: true
+      },
+      // <input name="qq" type="text" placeholder="请填写您的QQ号，方便我们与您取得联系" />
+      qq: 'isQQ'
+    },
+    // Key/value pairs defining custom messages. Key is the name of an element, value the message to display for that element.
+    // Instead of a plain message, another map with specific messages for each rule can be used.
+    messages: {
+      name:"请填写真实姓名",
+      email: "请填写正确的邮箱地址",
+      mobile: {
+        required:"请填写手机号码",
+        isMobile: "请填写正确的手机号码"
+      },
+      smsCode: {
+        required:"请填写短信验证码"//验证码错误，请重新输入
+      },
+      randomCodeInput: {
+        required: "请填写图片验证码"//验证码错误，请重新输入
+      }
+    }
+  });
+
+  $(".btn-submit").on("click", function () {
+    validator.form();
+    if (validator.valid()) {
+      $result.find('.output').html('form is valid, you can do something.');
+    } else {
+      $result.find('.output').html('form is invalid');
+    }
+  });
 
 }
 module.exports = {
