@@ -43,13 +43,13 @@ var DEFAULTS = {
   body: "Your dialog body",
   // if equals false, don't show footer.
   footer: {
-    html: '<button class="popup-btn" data-trigger="ok">确定</button>'
+    html: '<button class="btn btn-primary btn-sm btn-popup" data-trigger="ok">确定</button>'
   }
 };
 
 var DEFAULTS_CONFIRM = {
   footer: {
-    html: '<span class="popup-btn" data-trigger="cancel">取消</span><span class="popup-btn" data-trigger="confirm">确定</span>'
+    html: '<span class="btn btn-primary btn-sm btn-popup" data-trigger="cancel">取消</span>&nbsp;&nbsp;<span class="btn btn-primary btn-sm btn-popup" data-trigger="confirm">确定</span>'
   },
   onActionClicked: function ($target) {
     if ($target.data('trigger') === "confirm") {
@@ -85,8 +85,10 @@ function dialog(type, options) {
       triggerCall.call(this, o.onClose);
       unbindEvents(this);
     },
+
     // for confirm dialog box.
     onConfirm: o.onConfirm,
+
     // for cancel dialog box.
     onCancel: o.onCancel,
     modal: o.modal,
