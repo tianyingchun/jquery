@@ -36,6 +36,29 @@ $.extend(validator.messages, {
   min: $.validator.format("请输入一个最小为{0} 的值")
 });
 
+var formErrorClass = 'form-error';
+var formValidClass = 'form-success';
+//http://jqueryvalidation.org/validate/
+validator.DEFAULTS = {
+  ignore: ".ignore",
+  errorClass: "error",
+  validClass: "success",
+  errorElement: 'span',
+  errorPlacement: function(error, element) {
+    element.parent('.form-group').addClass('form-error').append(error);
+  },
+  highlight: function(element, errorClass, validClass) {
+    // console.log('highlight', element, errorClass, validClass)
+    $(element).parent('.form-group').addClass(formErrorClass).removeClass(formValidClass);
+    // $(element.form).find("label[for=" + element.id + "]").addClass(errorClass);
+  },
+  unhighlight: function(element, errorClass, validClass) {
+    // console.log('unhighlight',element, errorClass, validClass)
+
+    $(element).parent('.form-group').removeClass(formErrorClass).addClass(formValidClass);
+    // $(element.form).find("label[for=" + element.id + "]").removeClass(errorClass);
+  }
+}
 module.exports = validator;
 
 

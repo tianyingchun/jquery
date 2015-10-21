@@ -3,7 +3,7 @@ var $ = require('jquery');
 // require jquery form.
 require('../jquery.form')($);
 
-var validator = require('../index');
+var validatorLib = require('../index');
 var { UI } = require('../../core');
 var { template } = require('../../../utils');
 
@@ -26,7 +26,11 @@ function renderIntroductions() {
   let $renderTo = getMountNode();
   var options =
   '{\n'+
-
+  ' rules: {},\n'+
+  ' messages: {},\n'+
+  ' submitHandler: function(form) {},\n'+
+  ' invalidHandler: function (event, validator) {},\n'+
+  ' The more at config at http://jqueryvalidation.org/validate/\n'+
   '}'
   ;
 
@@ -157,15 +161,14 @@ function renderSample1() {
     '  </fieldset>\n'+
     '</form>';
   let scriptCode =
-
-  'var validator = $("#form").validate({\n'+
-  '  errorElement: \'span\',\n'+
+  'var $submit = $(".btn-submit");\n'+
+  'var validateOptions = $.extend({}, validatorLib.DEFAULTS, {\n'+
   '  rules: {\n'+
-  '    // the `mobile` is form field name.\n'+
+  '    //  the name-field mapping, the `mobile` is form field name.\n'+
   '    // <input name="mobile" maxlength="11"  required  type="text" placeholder="请填写您的真实手机，方便我们与您取得联系" />\n'+
   '    mobile: \'isMobile\',\n'+
   '    email: {\n'+
-  '      required: false,\n'+
+  '      required: true,\n'+
   '      email: true\n'+
   '    },\n'+
   '    // <input name="qq" type="text" placeholder="请填写您的QQ号，方便我们与您取得联系" />\n'+
@@ -186,16 +189,27 @@ function renderSample1() {
   '    randomCodeInput: {\n'+
   '      required: "请填写图片验证码"//验证码错误，请重新输入\n'+
   '    }\n'+
-  '  }\n'+
-  '});\n'+
-  '$(".btn-submit").on("click", function () {\n'+
-  '  validator.form();\n'+
-  '  if (validator.valid()) {\n'+
-  '    $result.find(\'.output\').html(\'form is valid, you can do something.\');\n'+
-  '  } else {\n'+
-  '    $result.find(\'.output\').html(\'form is invalid\');\n'+
+  '  },\n'+
+  '  submitHandler: function(form) {\n'+
+  '    // do other things for a valid form\n'+
+  '    // http://www.malsup.com/jquery/form/#api\n'+
+  '    $(form).ajaxSubmit({\n'+
+  '      // pre-submit callback\n'+
+  '      beforeSubmit:  function () {\n'+
+  '        $submit.button(\'loading\');\n'+
+  '        console.log(\'pre-submit callback\');\n'+
+  '      },\n'+
+  '      // post-submit callback\n'+
+  '      success:       function () {\n'+
+  '        console.log(\'post-submit callback\');\n'+
+  '        $submit.button(\'reset\');\n'+
+  '      }\n'+
+  '    });\n'+
   '  }\n'+
   '});';
+
+  //http://jqueryvalidation.org/validate/
+  var validator = $("#form").validate(validateOptions);
 
   let $result = getSampleTemplate('直接dom data api', {
     demoCode: demoCode,
@@ -204,29 +218,9 @@ function renderSample1() {
 
   $renderTo.append($result);
 
-  var formErrorClass = 'form-error';
-  var formValidClass = 'form-success';
   var $submit = $(".btn-submit");
-  //http://jqueryvalidation.org/validate/
-  var validator = $("#form").validate({
-    ignore: ".ignore",
-    errorClass: "error",
-    validClass: "success",
-    errorElement: 'span',
-    errorPlacement: function(error, element) {
-      element.parent('.form-group').addClass('form-error').append(error);
-    },
-    highlight: function(element, errorClass, validClass) {
-      // console.log('highlight', element, errorClass, validClass)
-      $(element).parent('.form-group').addClass(formErrorClass).removeClass(formValidClass);
-      // $(element.form).find("label[for=" + element.id + "]").addClass(errorClass);
-    },
-    unhighlight: function(element, errorClass, validClass) {
-      // console.log('unhighlight',element, errorClass, validClass)
 
-      $(element).parent('.form-group').removeClass(formErrorClass).addClass(formValidClass);
-      // $(element.form).find("label[for=" + element.id + "]").removeClass(errorClass);
-    },
+  var validateOptions = $.extend({}, validatorLib.DEFAULTS, {
     rules: {
       //  the name-field mapping, the `mobile` is form field name.
       // <input name="mobile" maxlength="11"  required  type="text" placeholder="请填写您的真实手机，方便我们与您取得联系" />
@@ -254,6 +248,9 @@ function renderSample1() {
         required: "请填写图片验证码"//验证码错误，请重新输入
       }
     },
+    invalidHandler: function (event, validator) {
+      // console.log(event, validator);
+    },
     submitHandler: function(form) {
       // do other things for a valid form
       // http://www.malsup.com/jquery/form/#api
@@ -272,6 +269,8 @@ function renderSample1() {
       });
     }
   });
+  //http://jqueryvalidation.org/validate/
+  var validator = $("#form").validate(validateOptions);
 
   // can use ajaxSubmit instead.
   // $submit.on("click", function () {
