@@ -85,7 +85,9 @@ Button.DEFAULTS = {
   loadingText: 'loading...',
   resetText: '',
   disabledClassName: 'disabled',
-  spinner: undefined
+  spinner: undefined,
+  // for checkbox list we should set it to true.
+  preventDefault: false
 };
 
 createPlugin(componentName, Button, {
@@ -100,11 +102,15 @@ createPlugin(componentName, Button, {
 
 // Init code
 $(document).on('click.button.data-api', '[data-button]', function (e) {
-  e.preventDefault();
   var $btn = $(e.target);
 
   if (!$btn.hasClass('btn')) {
     $btn = $btn.closest('.btn');
+  }
+  // check if we need to prevent default bubble event.
+  var btnInstance = $(this).getInstance();
+  if (btnInstance && btnInstance.getOption('preventDefault') === true) {
+    e.preventDefault();
   }
 
   $btn.button('toggle');

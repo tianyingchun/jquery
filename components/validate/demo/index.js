@@ -1,4 +1,8 @@
 var $ = require('jquery');
+
+// require jquery form.
+require('../jquery.form')($);
+
 var validator = require('../index');
 var { UI } = require('../../core');
 var { template } = require('../../../utils');
@@ -59,7 +63,7 @@ function renderSample1() {
   let $renderTo = getMountNode();
 
   let demoCode =
-    '<form class="form" id="form">\n'+
+    '<form class="form" id="form" method="post" action="http://localhost:4001/test">\n'+
     '  <fieldset>\n'+
     '    <legend>表单标题</legend>\n'+
     '    <div class="form-group">\n'+
@@ -76,7 +80,7 @@ function renderSample1() {
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-ipt-file-1">原生文件上传域</label>\n'+
-    '      <input type="file" id="doc-ipt-file-1">\n'+
+    '      <input name="fileUpload1" type="file" id="doc-ipt-file-1">\n'+
     '      <p class="form-help">请选择要上传的文件...</p>\n'+
     '    </div>\n'+
     '    <div class="form-group form-file">\n'+
@@ -85,11 +89,11 @@ function renderSample1() {
     '        <button type="button" class="btn btn-default btn-sm">\n'+
     '          <i class="glyph-icon glyph-twitter3"></i> 选择要上传的文件</button>\n'+
     '      </div>\n'+
-    '      <input type="file" id="doc-ipt-file-2">\n'+
+    '      <input type="file" name="fileUpload2" id="doc-ipt-file-2">\n'+
     '    </div>\n'+
     '    <div class="checkbox">\n'+
     '      <label>\n'+
-    '        <input type="checkbox"> 复选框，选我选我选我\n'+
+    '        <input name="checkbox1" type="checkbox"> 复选框，选我选我选我\n'+
     '      </label>\n'+
     '    </div>\n'+
     '    <div class="radio">\n'+
@@ -106,18 +110,18 @@ function renderSample1() {
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label class="checkbox-inline">\n'+
-    '        <input type="checkbox" value="option1"> 选我\n'+
+    '        <input name="checkbox2" type="checkbox" value="option1"> 选我\n'+
     '      </label>\n'+
     '      <label class="checkbox-inline">\n'+
-    '        <input type="checkbox" value="option2"> 同时可以选我\n'+
+    '        <input name="checkbox3" type="checkbox" value="option2"> 同时可以选我\n'+
     '      </label>\n'+
     '      <label class="checkbox-inline">\n'+
-    '        <input type="checkbox" value="option3"> 还可以选我\n'+
+    '        <input name="checkbox4" type="checkbox" value="option3"> 还可以选我\n'+
     '      </label>\n'+
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label class="radio-inline">\n'+
-    '        <input type="radio"  value="" name="docInlineRadio"> 每一分\n'+
+    '        <input type="radio" value="" name="docInlineRadio"> 每一分\n'+
     '      </label>\n'+
     '      <label class="radio-inline">\n'+
     '        <input type="radio" name="docInlineRadio"> 每一秒\n'+
@@ -128,7 +132,7 @@ function renderSample1() {
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-select-1">下拉多选框</label>\n'+
-    '      <select id="doc-select-1">\n'+
+    '      <select name="select" id="doc-select-1">\n'+
     '        <option value="option1">选项一...</option>\n'+
     '        <option value="option2">选项二.....</option>\n'+
     '        <option value="option3">选项三........</option>\n'+
@@ -137,7 +141,7 @@ function renderSample1() {
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-select-2">多选框</label>\n'+
-    '      <select multiple class="" id="doc-select-2">\n'+
+    '      <select name="selectmultiple" multiple class="" id="doc-select-2">\n'+
     '        <option>1</option>\n'+
     '        <option>2</option>\n'+
     '        <option>3</option>\n'+
@@ -147,9 +151,9 @@ function renderSample1() {
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-ta-1">文本域</label>\n'+
-    '      <textarea class="" rows="5" id="doc-ta-1"></textarea>\n'+
+    '      <textarea name="textarea" class="" rows="5" id="doc-ta-1"></textarea>\n'+
     '    </div>\n'+
-    '    <p><button type="button" class="btn-submit btn btn-default">提交</button></p>\n'+
+    '    <p><button type="submit" data-button="{loadingText: \'努力加载中...\'}" class="btn-submit btn btn-default">提交</button></p>\n'+
     '  </fieldset>\n'+
     '</form>';
   let scriptCode =
@@ -200,29 +204,31 @@ function renderSample1() {
 
   $renderTo.append($result);
 
-  var errorClass = 'form-error';
-  var validClass = 'form-success';
-
+  var formErrorClass = 'form-error';
+  var formValidClass = 'form-success';
+  var $submit = $(".btn-submit");
   //http://jqueryvalidation.org/validate/
   var validator = $("#form").validate({
+    ignore: ".ignore",
+    errorClass: "error",
+    validClass: "success",
     errorElement: 'span',
     errorPlacement: function(error, element) {
-      console.log(error, element);
       element.parent('.form-group').addClass('form-error').append(error);
     },
     highlight: function(element, errorClass, validClass) {
-      console.log('highlight', element, errorClass, validClass)
-      $(element).parent('.form-group').addClass(errorClass).removeClass(validClass);
+      // console.log('highlight', element, errorClass, validClass)
+      $(element).parent('.form-group').addClass(formErrorClass).removeClass(formValidClass);
       // $(element.form).find("label[for=" + element.id + "]").addClass(errorClass);
     },
     unhighlight: function(element, errorClass, validClass) {
-      console.log('unhighlight',element, errorClass, validClass)
+      // console.log('unhighlight',element, errorClass, validClass)
 
-      $(element).parent('.form-group').removeClass(errorClass).addClass(validClass);
+      $(element).parent('.form-group').removeClass(formErrorClass).addClass(formValidClass);
       // $(element.form).find("label[for=" + element.id + "]").removeClass(errorClass);
     },
     rules: {
-      // the `mobile` is form field name.
+      //  the name-field mapping, the `mobile` is form field name.
       // <input name="mobile" maxlength="11"  required  type="text" placeholder="请填写您的真实手机，方便我们与您取得联系" />
       mobile: 'isMobile',
       email: {
@@ -247,18 +253,37 @@ function renderSample1() {
       randomCodeInput: {
         required: "请填写图片验证码"//验证码错误，请重新输入
       }
+    },
+    submitHandler: function(form) {
+      // do other things for a valid form
+      // http://www.malsup.com/jquery/form/#api
+
+      $(form).ajaxSubmit({
+        // pre-submit callback
+        beforeSubmit:  function () {
+          $submit.button('loading');
+          console.log('pre-submit callback');
+        },
+        // post-submit callback
+        success:       function () {
+          console.log('post-submit callback');
+          $submit.button('reset');
+        }
+      });
     }
   });
 
-  $(".btn-submit").on("click", function () {
-    validator.form();
-    if (validator.valid()) {
-      $result.find('.output').html('form is valid, you can do something.');
-    } else {
-      $result.find('.output').html('form is invalid');
-    }
-  });
+  // can use ajaxSubmit instead.
+  // $submit.on("click", function () {
+  //   validator.form();
+  //   if (validator.valid()) {
+  //     $result.find('.output').html('form is valid, you can do something.');
+  //   } else {
+  //     $result.find('.output').html('form is invalid');
+  //   }
+  // });
 
+  UI.run('ui.button');
 }
 module.exports = {
   render: function () {

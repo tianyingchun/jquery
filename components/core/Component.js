@@ -53,6 +53,10 @@ Component.prototype = {
   setOptions: function (options) {
     this.options = $.extend(this.options, options);
   },
+  //@public
+  getOption: function (key) {
+    return (this.options || {})[key];
+  },
   // @public
   // bind callback to specificed context.
   bind: function (fn, context /*, additionalArguments */ ) {

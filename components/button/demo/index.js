@@ -100,7 +100,7 @@ function renderSample2() {
   let $renderTo = getMountNode();
 
   let demoCode =
-    '<div class="btn-group" data-button>\n'+
+    '<div class="btn-group" data-button=\'{"preventDefault": true}\'>\n'+
     '  <label class="btn btn-primary">\n'+
     '    <input type="checkbox" name="doc-js-btn" value="苹果"> 苹果\n'+
     '  </label>\n'+
