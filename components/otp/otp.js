@@ -271,6 +271,8 @@ var Otp = ComponentClass.extend({
   },
   destroy: function () {
     this._destroy();
+    this.$otpGet.off('click');
+    this.$captchaInput.off('input');
   }
 });
 
