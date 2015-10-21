@@ -293,8 +293,5 @@ module.exports = {
     // render sample1.
     renderSample1();
 
-    $('pre code').each(function(i, block) {
-      hljs.highlightBlock(block);
-    });
   }
 };

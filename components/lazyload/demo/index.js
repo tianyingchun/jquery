@@ -130,9 +130,5 @@ module.exports = {
     renderSample1();
 
     // render sample2.
-
-    $('pre code').each(function(i, block) {
-      hljs.highlightBlock(block);
-    });
   }
 };
