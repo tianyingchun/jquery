@@ -36,6 +36,10 @@ jQuery.extend(_, {
     return obj != null && hasOwnProperty.call(obj, key);
   },
 
+  trim: function (s) {
+    return s ? s.replace(/^\s+|\s+$/g, "") : "";
+  },
+
   // empty function.
   noop: function noop() {},
 
