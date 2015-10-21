@@ -80,14 +80,14 @@ function getRequestUrl(url) {
 
   // if we providered an api url with "http|s" prefix omit it.
   if (!/^((ftp|http|https):\/\/|\/\/)[^ "]+$/.test(url)) {
-    url = "http://root" + url;
+    url = this.apiRoot + url;
   }
   return url;
 }
 
 var OtpAPI = {
   //"http://192.168.11.10:8080";
-  apiRoot: "//yun.glodon.com",
+  apiRoot: "http://localhost:4001",
   // we can customized sendOTP http request api name.
   trySendOTPApi: "",
   getRequestUrl: getRequestUrl,
@@ -126,7 +126,7 @@ var OtpAPI = {
 
     $.extend(data, extraData);
     // we can defined api name to route specificed api path.
-    var _sendOTPApiUrl = this.trySendOTPApi || "/selfcenter/changeSendOtp";
+    var _sendOTPApiUrl = this.trySendOTPApi || "/otp/changeSendOtp";
 
     $.ajax({
       url: getRequestUrl.call(this, _sendOTPApiUrl),
@@ -152,7 +152,7 @@ var OtpAPI = {
     var data = {};
     $.extend(data, extraData);
     $.ajax({
-      url: getRequestUrl.call(this, "/goutong/refreshCaptcha"),
+      url: getRequestUrl.call(this, "/otp/refreshCaptcha"),
       contentType: "application/json",
       type: 'POST',
       dataType: 'json',
@@ -176,7 +176,7 @@ var OtpAPI = {
   verifyCaptcha: function (captcha, extraData, cb) {
     $.extend(captcha, extraData);
     $.ajax({
-      url: getRequestUrl.call(this, "/goutong/verifyCaptcha"),
+      url: getRequestUrl.call(this, "/otp/verifyCaptcha"),
       contentType: "application/json",
       type: 'POST',
       dataType: 'json',
