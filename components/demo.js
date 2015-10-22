@@ -4,6 +4,8 @@ var PopupDemo = require('./popup/demo');
 var LazyloadDemo = require('./lazyload/demo');
 var ValidateDemo = require('./validate/demo');
 var OtpDemo = require('./otp/demo');
+var PaginationDemo = require('./pagination/demo');
+var TimelineDemo = require('./timeline/demo');
 
 module.exports = {
   ButtonDemo,
@@ -11,5 +13,7 @@ module.exports = {
   PopupDemo,
   LazyloadDemo,
   ValidateDemo,
-  OtpDemo
+  OtpDemo,
+  PaginationDemo,
+  TimelineDemo
 };

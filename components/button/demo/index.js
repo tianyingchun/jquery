@@ -142,6 +142,45 @@ function renderSample2() {
 
 }
 
+
+function renderSample3() {
+  let $renderTo = getMountNode();
+
+  let demoCode =
+    '<div class="btn-group" data-button=\'{"preventDefault": true}\'>\n'+
+    '  <label class="btn btn-primary">\n'+
+    '    <input type="radio" name="options" value="选项 1"> 选项 1\n'+
+    '  </label>\n'+
+    '  <label class="btn btn-primary">\n'+
+    '    <input type="radio" name="options" value="选项 2"> 选项 2\n'+
+    '  </label>\n'+
+    '  <label class="btn btn-primary active" >\n'+
+    '    <input type="radio" checked="checked" name="options" value="选项 3"> 选项 3\n'+
+    '  </label>\n'+
+    '</div>';
+
+  let scriptCode =
+    'var $radio = $result.find(\'[name="options"]\');\n'+
+    '$radio.on(\'change\', function() {\n'+
+    '  $result.find(\'.output\').html(\'单选框选中的是：\' + $radios.filter(\':checked\').val());\n'+
+    '});';
+
+  let $result = getSampleTemplate('单选框', {
+    demoCode: demoCode,
+    scriptCode: scriptCode
+  });
+
+  $renderTo.append($result);
+
+  UI.run(Button.getInstanceName());
+
+  var $radios = $result.find('[name="options"]');
+  $radios.on('change', function() {
+    $result.find('.output').html('单选框选中的是：' + $radios.filter(':checked').val());
+  });
+
+}
+
 module.exports = {
   render: function () {
 
@@ -153,5 +192,8 @@ module.exports = {
 
     // render sample2.
     renderSample2();
+
+    // render sample3.
+    renderSample3();
   }
 };
