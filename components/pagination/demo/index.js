@@ -20,7 +20,16 @@ function renderIntroductions() {
   let $renderTo = getMountNode();
   var options =
   '{\n'+
-
+  '  total: 0, // total record, default is 0.\n'+
+  '  current: 1, // default is page 1\n'+
+  '  pageSize: 10,\n'+
+  '  prefixCls: \'pagination\', // the root prefix class.\n'+
+  '  showSizeChanger: false,\n'+
+  '  className: \'\', // if is \'min\' it\'s smallest pagination size button\n'+
+  '  onShowSizeChange: $.noop, // pageSize property changed callback\n'+
+  '  onChange: $.noop, // page number changed callback\n'+
+  '  showQuickJumper: false, // The value indicates if we can quick jump to pageNumber\n'+
+  '  simple: \'\' //if have value of this property, display simple pagination.\n'+
   '}'
   ;
 
@@ -57,10 +66,22 @@ function renderSample1() {
   let $renderTo = getMountNode();
 
   let demoCode =
-    '<div data-pagination=\'{"simple": true, "pageSize": 10, "total": 100}\'>....<div>';
+    '<div data-pagination=\'{"simple": true, "pageSize": 10, "total": 100}\'>....</div>';
 
   let scriptCode =
-    '';
+   '// dynamic set onChange callback, method 1\n'+
+   '$pagination.pagination(\'setOptions\', {\n'+
+   '  onChange: function (page) {\n'+
+   '    console.log(\'current page: \', page);\n'+
+   '  }\n'+
+   '});\n'+
+   '// dynamic set onChange callback, method 2\n'+
+   '// var paginationInstance = $pagination.getInstance();\n'+
+   '// paginationInstance.setOptions({\n'+
+   '//   onChange: function (page) {\n'+
+   '//     console.log(\'current page: \', page);\n'+
+   '//   }\n'+
+   '// })';
 
   let $result = getSampleTemplate('直接dom data api', {
     demoCode: demoCode,
@@ -72,6 +93,20 @@ function renderSample1() {
   var $pagination = $result.find('[data-pagination]');
 
   UI.run(Pagination.getInstanceName());
+
+  // dynamic set onChange callback, method 1
+  $pagination.pagination('setOptions', {
+    onChange: function (page) {
+      console.log('current page: ', page);
+    }
+  });
+  // dynamic set onChange callback, method 2
+  // var paginationInstance = $pagination.getInstance();
+  // paginationInstance.setOptions({
+  //   onChange: function (page) {
+  //     console.log('current page: ', page);
+  //   }
+  // })
 
 }
 
