@@ -102,13 +102,13 @@ function renderSample2() {
   let demoCode =
     '<div class="btn-group" data-button=\'{"preventDefault": true}\'>\n'+
     '  <label class="btn btn-primary">\n'+
-    '    <input type="checkbox" name="doc-js-btn" value="苹果"> 苹果\n'+
+    '    <input type="checkbox" class="checkbox" name="doc-js-btn" value="苹果"> 苹果\n'+
     '  </label>\n'+
     '  <label class="btn btn-primary">\n'+
-    '    <input type="checkbox" name="doc-js-btn" value="橘子"> 橘子\n'+
+    '    <input type="checkbox" class="checkbox" name="doc-js-btn" value="橘子"> 橘子\n'+
     '  </label>\n'+
     '  <label class="btn btn-primary" >\n'+
-    '    <input type="checkbox" name="doc-js-btn" value="香蕉"> 香蕉\n'+
+    '    <input type="checkbox" class="checkbox" name="doc-js-btn" value="香蕉"> 香蕉\n'+
     '  </label>\n'+
     '</div>';
 
@@ -149,13 +149,13 @@ function renderSample3() {
   let demoCode =
     '<div class="btn-group" data-button=\'{"preventDefault": true}\'>\n'+
     '  <label class="btn btn-primary">\n'+
-    '    <input type="radio" name="options" value="选项 1"> 选项 1\n'+
+    '    <input type="radio" class="radio" name="options" value="选项 1"> 选项 1\n'+
     '  </label>\n'+
     '  <label class="btn btn-primary">\n'+
-    '    <input type="radio" name="options" value="选项 2"> 选项 2\n'+
+    '    <input type="radio" class="radio" name="options" value="选项 2"> 选项 2\n'+
     '  </label>\n'+
     '  <label class="btn btn-primary active" >\n'+
-    '    <input type="radio" checked="checked" name="options" value="选项 3"> 选项 3\n'+
+    '    <input type="radio" class="radio" checked="checked" name="options" value="选项 3"> 选项 3\n'+
     '  </label>\n'+
     '</div>';
 

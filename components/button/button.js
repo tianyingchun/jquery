@@ -1,3 +1,4 @@
+require('./button.less');
 var $ = require('jquery');
 var { UI, createPlugin, ComponentClass } = require('../core');
 var componentName = "button";
@@ -48,15 +49,16 @@ var Button = ComponentClass.extend({
       }
     }), 0);
   },
-  toggle: function () {
+  toggle: function ($btn) {
+    // console.log('$btn',$btn);
+    if (!$btn) return;
     var changed = true;
-    var $element = this.$element;
-    var $parent = $element.parent('[class*="btn-group"]');
+    var $parent = $btn.parent('[class*="btn-group"]');
     if ($parent.length) {
-      var $input = $element.find('input');
+      var $input = $btn.find('input');
 
       if ($input.prop('type') == 'radio') {
-        if ($input.prop('checked') && $element.hasClass('active')) {
+        if ($input.prop('checked') && $btn.hasClass('active')) {
           changed = false;
         } else {
           $parent.find('.active').removeClass('active');
@@ -64,14 +66,14 @@ var Button = ComponentClass.extend({
       }
 
       if (changed) {
-        $input.prop('checked', !$element.hasClass('active')).trigger('change');
+        $input.prop('checked', !$btn.hasClass('active')).trigger('change');
       }
     }
 
     if (changed) {
-      $element.toggleClass('active');
-      if (!$element.hasClass('active')) {
-        $element.blur();
+      $btn.toggleClass('active');
+      if (!$btn.hasClass('active')) {
+        $btn.blur();
       }
     }
   },
@@ -93,7 +95,8 @@ Button.DEFAULTS = {
 createPlugin(componentName, Button, {
   methodCall: function (args, instance) {
     if (args[0] === 'toggle') {
-      instance.toggle();
+      // togger button.
+      instance.toggle(args[1]);
     } else if (typeof args[0] === 'string') {
       instance.setState.apply(instance, args);
     }
@@ -113,7 +116,7 @@ $(document).on('click.button.data-api', '[data-button]', function (e) {
     e.preventDefault();
   }
 
-  $btn.button('toggle');
+  $(this).button('toggle', $btn);
 });
 
 UI.ready(function (context) {
