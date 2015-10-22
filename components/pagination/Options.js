@@ -11,12 +11,21 @@ var Dropdown = require('../dropdown');
  *   rootPrefixCls: 'pagination'
  * }
  */
-function Options(props) {
+function Options($mountNode, props) {
   this.props = props;
+  this.$element = $mountNode;
   this.state = {
     current: props.current,
     _current: props.current
   };
+  $.each([
+    'render',
+    '_handleChange',
+    '_changeSize',
+    '_go'
+  ], this.bind(function (index, method) {
+    this[method] = this.bind(this[method]);
+  }));
 }
 
 $.extend(Options.prototype, {
@@ -51,6 +60,19 @@ $.extend(Options.prototype, {
     $.extend(this.state, state);
     // dispacher?
     //
+  },
+  destroy: function () {
+    this.unBindEvents();
+  },
+  bindEvents: function () {
+    this.$element
+      .on("change", "input.complex-input-page-number", this._handleChange)
+      .on("keyup", "input.complex-input-page-number", this._go);
+  },
+  unBindEvents: function () {
+    this.$element
+      .off("change", "input.complex-input-page-number")
+      .off("keyup", "input.complex-input-page-number");
   },
   render: function () {
     var props = this.props;
@@ -95,7 +117,7 @@ $.extend(Options.prototype, {
       goInputHtml = (
         '<div title="Quick jump to page" class="<%= jumperCls%>">' +
         '  跳至' +
-        '  <input type="text" value="<%= current%>" onChange={this._handleChange.bind(this)} onKeyUp={this._go.bind(this)}/>' +
+        '  <input type="text" class="complex-input-page-number" value="<%= current%>" />' +
         '  页' +
         '</div>'
       );
@@ -104,13 +126,8 @@ $.extend(Options.prototype, {
         current: current
       });
     }
-
-    return (
-      '<div class="<%= prefixCls%>">' +
-      changeSelectHtml +
-      goInputHtml +
-      '</div>'
-    );
+    // render dom.
+    this.$element.append($('<div class="<%= prefixCls%>">' + changeSelectHtml + goInputHtml + '</div>'));
   }
 });
 

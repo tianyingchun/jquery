@@ -40,13 +40,17 @@ Component.prototype = {
   initialize: function ($element, options) {
     throw new Error('the initialize() should be implemented!');
   },
-  _destroy: function () {
+  _destroy: function (clearAll) {
     this.$element.data(this._getInternalInstanceName(), null);
-    this.$element.data(this.componentName, null);
+    if (clearAll === true) {
+      // cause of we store data api configuration in dom Node, if we force destroy data('componentName')
+      // we can't restore the initialized config data if we want to re instance this plugin.
+      this.$element.data(this.componentName, null);
+    }
   },
   //@override.
-  destroy: function () {
-    this._destroy();
+  destroy: function (clearAll) {
+    this._destroy(clearAll);
     throw new Error('the destroy() should be implemented!');
   },
   // @public

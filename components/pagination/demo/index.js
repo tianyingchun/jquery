@@ -66,7 +66,7 @@ function renderSample1() {
   let $renderTo = getMountNode();
 
   let demoCode =
-    '<div data-pagination=\'{"simple": true, "pageSize": 10, "total": 100}\'>....</div>';
+    '<div data-pagination=\'{"simple": false, "current": 5, "pageSize": 10, "total": 100}\'>....</div>';
 
   let scriptCode =
    '// dynamic set onChange callback, method 1\n'+
