@@ -57,7 +57,7 @@ function renderSample1() {
   let $renderTo = getMountNode();
 
   let demoCode =
-    '';
+    '<div data-pagination=\'{"simple": true, "pageSize": 10, "total": 100}\'>....<div>';
 
   let scriptCode =
     '';
