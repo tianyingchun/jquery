@@ -30,7 +30,7 @@ var Dropdown = ComponentClass.extend({
       var $menuItem = $(this);
       $element.triggerHandler('onSelect', {
         index: parseInt($launcherTarget.find(options.menuItemSelector).index($menuItem)) + 1,
-        value: $menuItem.data("value")
+        target: $menuItem
       });
       $menuItem.addClass('active').siblings(options.menuItemSelector).removeClass('active');
       if (options.menuAlwaysOpen) {

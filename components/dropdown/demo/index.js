@@ -31,7 +31,7 @@ function renderIntroductions() {
   '  launchOnMouseEnter: false,\n'+
   '  // The value indicates if auto close menu container while click any of menu items.\n'+
   '  menuAlwaysOpen: false,\n'+
-  '  onSelect: $.noop\n'+
+  '  onSelect: $.noop //(evt, {index, $item})\n'+
   '}'
   ;
 

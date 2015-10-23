@@ -4,7 +4,6 @@ var KEYCODE = require('./KeyCode');
 var template = require('../../utils/template');
 var { UI, createPlugin, ComponentClass } = require('../core');
 var componentName = "pagination";
-var Options = require('./Options');
 
 /**
  * The Plugin Component
@@ -19,6 +18,8 @@ var Pagination = ComponentClass.extend({
   initialize: function ($element, options) {
     this.rootPrefixCls = this.options.prefixCls || 'pagination';
     this.props = this.options;
+    this.optionsInstance = null;
+
     this.state = {
       current: options.current,
       _current: options.current,
@@ -73,7 +74,7 @@ var Pagination = ComponentClass.extend({
       '    <a></a>' +
       '  </li>' +
       '  <div title="<%=currentSimpleTitle%>" class="<%= currentSimpleCls%>">' +
-      '    <input type="text" class="simple-input-page-number" value="<%=simpleValue%>"/>' +
+      '    <input type="text" class="input-page-number" value="<%=simpleValue%>"/>' +
       '    <span class="<%= simpleSlashCls%>">／</span>' +
       '    <%= allPages%>' +
       '  </div>' +
@@ -97,9 +98,9 @@ var Pagination = ComponentClass.extend({
   // @private bind events for pagination with `simple` mode
   _bindSimplePaginationEvents: function () {
     this.$element
-      .on("keydown", ".simple-input-page-number", this._handleKeyDown)
-      .on("keyup", ".simple-input-page-number", this._handleKeyUp)
-      .on("change", ".simple-input-page-number", this._handleKeyUp)
+      .on("keydown", ".input-page-number", this._handleKeyDown)
+      .on("keyup", ".input-page-number", this._handleKeyUp)
+      .on("change", ".input-page-number", this._handleKeyUp)
       .on("click", ".simple-page-prev", this._prev)
       .on("click", ".simple-page-next", this._next);
   },
@@ -107,12 +108,13 @@ var Pagination = ComponentClass.extend({
     this.$element.off('click').off('change').off('keydown').off('keyup');
   },
   /**
-   * We can dynamicly set plugin configuration and invoke render()
+   * We can dynamicly set plugin configuration .setOptions() and invoke render()
    * to update pagination dom.
    * @author tianyingchun
    * @date   2015-10-22
    */
   render: function () {
+    var props = this.props;
     if (this.options.simple) {
       // render more complex feature.
       this.$element.html(this.renderSimpleMode());
@@ -189,7 +191,6 @@ var Pagination = ComponentClass.extend({
     let rootCls = `${prefixCls} ${props.className}`;
     let prevCls = (this._hasPrev() ? '' : `${prefixCls}-disabled `) + `${prefixCls}-prev`;
     let nextCls = (this._hasNext() ? '' : `${prefixCls}-disabled `) + `${prefixCls}-next`;
-    // let optionsInstance = new Options();
 
     var paginationHtml = (
       '<ul class="<%= rootCls%>" unselectable="unselectable">'+
@@ -199,22 +200,41 @@ var Pagination = ComponentClass.extend({
       '  <%:=pagerList%>'+
       '  <li title="Next Page" class="complex-page-next <%= nextCls%>">'+
       '    <a></a>'+
-      '  </li>'+
-      '  <div class="pagination-options"></div>'+
+      '  </li><%:=quickGo%>'+
       '</ul>'
     );
-     // <Options rootPrefixCls={prefixCls}
-     //      selectComponentClass={props.selectComponentClass}
-     //      selectPrefixCls={props.selectPrefixCls}
-     //      changeSize={this.props.showSizeChanger ? this._changePageSize.bind(this) : null}
-     //      current={this.state.current}
-     //      quickGo={this.props.showQuickJumper ? this._handleChange.bind(this) : null} />
     return template(paginationHtml, {
       pagerList: pagerList.join(''),
       rootCls: rootCls,
       prevCls: prevCls,
-      nextCls: nextCls
+      nextCls: nextCls,
+      quickGo: this.getQuickGoHtml()
     });
+  },
+  getQuickGoHtml: function () {
+    var props = this.props;
+    var state = this.state;
+    var prefixCls = props.prefixCls + "-options";
+
+    var goInputHtml = '';
+    if (props.showQuickJumper) {
+      var jumperCls = prefixCls + '-quick-jumper';
+      var current = state._current;
+
+      goInputHtml = (
+        '<li class="<%=prefixCls%>"><div title="Quick jump to page" class="<%= jumperCls%>">' +
+        '  跳至' +
+        '  <input type="text" class="input-page-number" value="<%= current%>" />' +
+        '  页' +
+        '</div></li>'
+      );
+      goInputHtml = template(goInputHtml, {
+        jumperCls: jumperCls,
+        prefixCls: prefixCls,
+        current: current
+      });
+    }
+    return goInputHtml;
   },
   _bindComplexPaginationEvents: function () {
     var _this = this;
@@ -226,10 +246,13 @@ var Pagination = ComponentClass.extend({
       .on("click", 'li[data-key^="pageItem-"]', function (e) {
         var page = $(this).data('page');
         _this._handleChange(page);
-      });
+      })
+      .on("keydown", ".input-page-number", this._handleKeyDown)
+      .on("change", ".input-page-number", this._handleKeyUp)
+      .on("keyup", ".input-page-number", this._handleKeyUp);
   },
   _unBindComplexPaginationEvents: function () {
-
+    this.$element.off('click').off('keyup').off('keydown').off('change');
   },
   /**
    * Render each pager item
@@ -276,6 +299,11 @@ var Pagination = ComponentClass.extend({
       this._unBindSimplePaginationEvents();
     } else {
       this._unBindComplexPaginationEvents();
+
+      // destroy options instance.
+      if (this.optionsInstance) {
+        this.optionsInstance.destroy();
+      }
     }
   },
   // private methods
@@ -321,27 +349,7 @@ var Pagination = ComponentClass.extend({
       this._handleChange(val + 1);
     }
     // always refetch dom and focus input.
-    this.$element.find(".simple-input-page-number").focus();
-  },
-
-  _changePageSize: function (size) {
-    if (typeof size === 'number') {
-      let current = this.state.current;
-
-      this.setState({
-        pageSize: size,
-      });
-
-      if (this.state.current > this._calcPage(size)) {
-        current = this._calcPage(size);
-        this.setState({
-          current: current,
-          _current: current,
-        });
-      }
-
-      this.props.onShowSizeChange(current, size);
-    }
+    this.$element.find(".input-page-number").focus();
   },
 
   _handleChange: function (p) {
@@ -400,9 +408,7 @@ Pagination.DEFAULTS = {
   current: 1, // default is page 1
   pageSize: 10,
   prefixCls: 'pagination', // the root prefix class.
-  showSizeChanger: false,
   className: '', // if is 'min' it's smallest pagination size button
-  onShowSizeChange: $.noop, // pageSize property changed callback
   onChange: $.noop, // page number changed callback
   showQuickJumper: false, // The value indicates if we can quick jump to pageNumber
   simple: '' //if have value of this property, display simple pagination.
