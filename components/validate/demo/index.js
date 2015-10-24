@@ -206,10 +206,18 @@ function renderSample1() {
   '      }\n'+
   '    });\n'+
   '  }\n'+
-  '});';
-
-  //http://jqueryvalidation.org/validate/
-  var validator = $("#form").validate(validateOptions);
+  '});\n'+
+  '//http://jqueryvalidation.org/validate/\n'+
+  'var validator = $("#form").validate(validateOptions);\n'+
+  '// can use ajaxSubmit instead.\n'+
+  '// $submit.on("click", function () {\n'+
+  '//   validator.form();\n'+
+  '//   if (validator.valid()) {\n'+
+  '//     $result.find(\'.output\').html(\'form is valid, you can do something.\');\n'+
+  '//   } else {\n'+
+  '//     $result.find(\'.output\').html(\'form is invalid\');\n'+
+  '//   }\n'+
+  '// });';
 
   let $result = getSampleTemplate('直接dom data api', {
     demoCode: demoCode,
