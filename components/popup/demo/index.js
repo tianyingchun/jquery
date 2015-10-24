@@ -9,7 +9,6 @@ var docIntroduce =
   '<p>Popup是一个轻量级jQuery模态弹出组件</p>'+
   '<p>它不会创建或风格弹出但为您提供所有的逻辑定心、模态叠加、事件等等。它给你很多机会来定制它会满足您的需要</p>'+
   '<hr />'+
-  '<p>配置参数：<pre><code class="javascript"><%=options%></code></pre></p>'+
   '<h2>组件演示 Demos</h2>'
   ;
 
@@ -20,7 +19,61 @@ function getMountNode () {
 
 function renderIntroductions() {
   let $renderTo = getMountNode();
-  var options =
+  $renderTo.html('').append($(docIntroduce));
+}
+
+function getSampleTemplate(title, data) {
+  var sampleTpl =
+    '<h3><%= title%></h3>'+
+    '<div class="mount-node"><%:= demoCode%><span class="output"></span></div>'+
+    '<div class="doc-code demo-highlight">'+
+    '  <strong> Configuration</strong>'+
+    '  <pre>'+
+    '     <code class="javascript"><%= config %></code>'+
+    '  </pre>'+
+    '  <strong> DOM</strong>'+
+    '  <pre>'+
+    '     <code class="html"><%= demoCode %></code>'+
+    '  </pre>'+
+    '  <strong> Javascript</strong>'+
+    '  <pre>'+
+    '     <code class="javscript"><%= scriptCode %></code>'+
+    '  </pre>'+
+    '</div>'+
+    '<hr />';
+  return  $(template(sampleTpl, {
+    title: title,
+    config: data.config || '',
+    demoCode: data.demoCode,
+    scriptCode: data.scriptCode
+  }));
+}
+
+function renderSample1() {
+
+  let $renderTo = getMountNode();
+
+  let demoCode =
+    '<button class="popup-open btn btn-primary">Open Popup</button>\n'+
+    '<div id="popup1" data-popup=\'{"modalClose": true, "domReadyShow": false}\' class="popup">\n' +
+    '   <div class="popup-dialog">\n' +
+    '       <div class="popup-hd">\n' +
+    '           <span class="close"><i>X</i></span>\n' +
+    '       </div>\n' +
+    '       <div class="popup-bd">\n' +
+    '           <div class="content">111</div>\n' +
+    '       </div>\n' +
+    '   </div>\n' +
+    '</div>';
+
+  let scriptCode =
+    '$result.on(\'click\', \'.popup-open\', function () {\n'+
+    '  var $popup = $(\'#popup1\');\n'+
+    '  var popupInstance = $popup.getInstance();\n'+
+    '  popupInstance.show();\n'+
+    '});';
+
+  var config =
   '{\n'+
     ' amsl: 50,\n'+
     ' // the value indicate if we auto open popup dialog while DOMReady.\n'+
@@ -53,63 +106,10 @@ function renderIntroductions() {
     ' transition: \'fadeIn\', //transitions: fadeIn, slideDown, slideIn, slideBack\n'+
     ' transitionClose: false,\n'+
     ' zIndex: 9997 // popup gets z-index 9999, modal overlay 9998\n'+
-  '}'
-  ;
-
-  $renderTo.html('').append($(template(docIntroduce, {
-    options:options
-  })));
-
-}
-
-function getSampleTemplate(title, data) {
-  var sampleTpl =
-    '<h3><%= title%></h3>'+
-    '<div class="mount-node"><%:= demoCode%><span class="output"></span></div>'+
-    '<div class="doc-code demo-highlight">'+
-    '  <strong> DOM</strong>'+
-    '  <pre>'+
-    '     <code class="html"><%= demoCode %></code>'+
-    '  </pre>'+
-    '  <strong> Javascript</strong>'+
-    '  <pre>'+
-    '     <code class="javscript"><%= scriptCode %></code>'+
-    '  </pre>'+
-    '</div>'+
-    '<hr />';
-  return  $(template(sampleTpl, {
-    title: title,
-    demoCode: data.demoCode,
-    scriptCode: data.scriptCode
-  }));
-}
-
-function renderSample1() {
-
-  let $renderTo = getMountNode();
-
-  let demoCode =
-    '<button class="popup-open btn btn-primary">Open Popup</button>\n'+
-    '<div id="popup1" data-popup=\'{"modalClose": true, "domReadyShow": false}\' class="popup">\n' +
-    '   <div class="popup-dialog">\n' +
-    '       <div class="popup-hd">\n' +
-    '           <span class="close"><i>X</i></span>\n' +
-    '       </div>\n' +
-    '       <div class="popup-bd">\n' +
-    '           <div class="content">111</div>\n' +
-    '       </div>\n' +
-    '   </div>\n' +
-    '</div>';
-
-  let scriptCode =
-    '$result.on(\'click\', \'.popup-open\', function () {\n'+
-    '  var $popup = $(\'#popup1\');\n'+
-    '  var popupInstance = $popup.getInstance();\n'+
-    '  popupInstance.show();\n'+
-    '});';
-
+  '}';
   let $result = getSampleTemplate('直接dom data api', {
     demoCode: demoCode,
+    config: config,
     scriptCode: scriptCode
   });
 
@@ -130,8 +130,7 @@ function renderSample2() {
   let $renderTo = getMountNode();
 
   let demoCode =
-    '<button class="alert-open btn btn-primary">Dialog Alert</button>\n'+
-    '<button class="confirm-open btn btn-primary">Dialog Confirm</button>'
+    '<button class="alert-open btn btn-primary">Dialog Alert</button>\n'
     ;
   let scriptCode =
     '// dialog alert open \n'+
@@ -149,32 +148,36 @@ function renderSample2() {
     '      this.close();\n'+
     '    }\n'+
     '  });\n'+
-    '});\n\n'+
-    '// for dalog confirm....\n'+
-    '$result.on(\'click\', \'.confirm-open\', function () {\n'+
-    '  dialog.confirm({\n'+
-    '    onOpen: function () {\n'+
-    '      $result.find(\'.output\').html(\'on open..\');\n'+
-    '    },\n'+
-    '    onClose: function () {\n'+
-    '      $result.find(\'.output\').html(\'on close..\');\n'+
-    '    },\n'+
-    '    onConfirm: function ($target) {\n'+
-    '      $result.find(\'.output\').html(\'on confirm()...\' + $target.data("trigger"));\n'+
-    '      // clicked close dialog.\n'+
-    '      this.close();\n'+
-    '    },\n'+
-    '    onCancel: function ($target) {\n'+
-    '      $result.find(\'.output\').html(\'on onCancel()...\' + $target.data("trigger"));\n'+
-    '      this.close();\n'+
-    '    }\n'+
-    '  });\n'+
-    '});';
+    '});\n';
 
-  let $result = getSampleTemplate('Dialog alert, confirm', {
+  // render dialog configuration.
+  var config =
+    '{\n'+
+    '  onOpen: false,\n'+
+    '  onClose: false,\n'+
+    '  onActionClicked: false,\n'+
+    '  autoClose: false,\n'+
+    '  modal: true,\n'+
+    '  modalClose: false,\n'+
+    '  classes: "",\n'+
+    '  // if equals false, don\'t show header.\n'+
+    '  header: {\n'+
+    '    showClose: true,\n'+
+    '    html: "Your Header"\n'+
+    '  },\n'+
+    '  body: "Your dialog body",\n'+
+    '  // if equals false, don\'t show footer.\n'+
+    '  footer: {\n'+
+    '    html: \'<button class="btn btn-primary btn-sm btn-popup" data-trigger="ok">确定</button>\'\n'+
+    '  }\n'+
+    '}';
+
+  let $result = getSampleTemplate('Dialog alert', {
     demoCode: demoCode,
+    config: config,
     scriptCode: scriptCode
   });
+
 
   $renderTo.append($result);
 
@@ -196,6 +199,69 @@ function renderSample2() {
       }
     });
   });
+
+}
+
+function renderSample3() {
+
+  let $renderTo = getMountNode();
+
+  let demoCode =
+    '<button class="confirm-open btn btn-primary">Dialog Confirm</button>'
+    ;
+  let scriptCode =
+    '// for dalog confirm....\n'+
+    '$result.on(\'click\', \'.confirm-open\', function () {\n'+
+    '  dialog.confirm({\n'+
+    '    onOpen: function () {\n'+
+    '      $result.find(\'.output\').html(\'on open..\');\n'+
+    '    },\n'+
+    '    onClose: function () {\n'+
+    '      $result.find(\'.output\').html(\'on close..\');\n'+
+    '    },\n'+
+    '    onConfirm: function ($target) {\n'+
+    '      $result.find(\'.output\').html(\'on confirm()...\' + $target.data("trigger"));\n'+
+    '      // clicked close dialog.\n'+
+    '      this.close();\n'+
+    '    },\n'+
+    '    onCancel: function ($target) {\n'+
+    '      $result.find(\'.output\').html(\'on onCancel()...\' + $target.data("trigger"));\n'+
+    '      this.close();\n'+
+    '    }\n'+
+    '  });\n'+
+    '});';
+
+  var config =
+  '{\n'+
+    '  onOpen: false,\n'+
+    '  onClose: false,\n'+
+    '  onConfirm: false,\n'+
+    '  onCancel: false,\n'+
+    '  onActionClicked: false,\n'+
+    '  autoClose: false,\n'+
+    '  modal: true,\n'+
+    '  modalClose: false,\n'+
+    '  classes: "",\n'+
+    '  // if equals false, don\'t show header.\n'+
+    '  header: {\n'+
+    '    showClose: true,\n'+
+    '    html: "Your Header"\n'+
+    '  },\n'+
+    '  body: "Your dialog body",\n'+
+    '  // if equals false, don\'t show footer.\n'+
+    '  footer: {\n'+
+    '    html: \'<button class="btn btn-primary btn-sm btn-popup" data-trigger="ok">确定</button>\'\n'+
+    '  }\n'+
+    '}';
+  let $result = getSampleTemplate('Dialog confirm', {
+    demoCode: demoCode,
+    config: config,
+    scriptCode: scriptCode
+  });
+
+  $renderTo.append($result);
+
+  UI.run(Popup.getInstanceName());
 
   // for dialog confirm
   $result.on('click', '.confirm-open', function () {
@@ -231,5 +297,8 @@ module.exports = {
 
     // render sample2.
     renderSample2();
+
+    renderSample3();
+
   }
 };
