@@ -12,6 +12,25 @@ function capitalize (str) {
   str = baseToString(str);
   return str && (str.charAt(0).toUpperCase() + str.slice(1));
 }
+
+function parseOptions(string) {
+  if ($.isPlainObject(string)) {
+    return string;
+  }
+  var start = (string ? string.indexOf('{') : -1);
+  var options = {};
+
+  if (start != -1) {
+    try {
+      var _options = string.substr(start).replace(/'/ig,'\"');
+      options = $.parseJSON(_options);;
+    } catch (e) {
+    }
+  }
+
+  return options;
+};
+
 /**
  * Plugin Component Pattern for jQuery
  *
@@ -49,7 +68,7 @@ function UIComponent(type, name, Component, pluginOption) {
       var instance = $this.data(componentInstanceName);
 
       // <div data-pluginName='{"name":"value"}'></div>
-      var attrDataOption = $this.data(dataOptionName);
+      var attrDataOption = parseOptions($this.attr('data-' + dataOptionName));
 
       var options = $.extend({}, typeof attrDataOption === 'object' && attrDataOption, typeof option === 'object' && option);
       if (!instance && option === 'destroy') return;
