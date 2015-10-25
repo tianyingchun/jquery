@@ -5,14 +5,13 @@ var { template } = require('../../../utils');
 var dialog = Popup.dialog;
 
 var docIntroduce =
-  '<h1> 轻量级的Popup弹窗框组件 <a target="_blank" href="https://github.com/tianyingchun/jquery/tree/master/components/popup" title="查看组件源码"><i class="glyph-icon glyph-github2"></i></a></h1>'+
-  '<p>Popup是一个轻量级jQuery模态弹出组件</p>'+
-  '<p>它不会创建或风格弹出但为您提供所有的逻辑定心、模态叠加、事件等等。它给你很多机会来定制它会满足您的需要</p>'+
-  '<hr />'+
-  '<h2>组件演示 Demos</h2>'
-  ;
+  '<h1> 轻量级的Popup弹窗框组件 <a target="_blank" href="https://github.com/tianyingchun/jquery/tree/master/components/popup" title="查看组件源码"><i class="glyph-icon glyph-github2"></i></a></h1>' +
+  '<p>Popup是一个轻量级jQuery模态弹出组件</p>' +
+  '<p>它不会创建或风格弹出但为您提供所有的逻辑定心、模态叠加、事件等等。它给你很多机会来定制它会满足您的需要</p>' +
+  '<hr />' +
+  '<h2>组件演示 Demos</h2>';
 
-function getMountNode () {
+function getMountNode() {
   let $renderTo = $(".right-main .doc-content");
   return $renderTo;
 }
@@ -24,24 +23,24 @@ function renderIntroductions() {
 
 function getSampleTemplate(title, data) {
   var sampleTpl =
-    '<h3><%= title%></h3>'+
-    '<div class="mount-node"><%:= demoCode%><span class="output"></span></div>'+
-    '<div class="doc-code demo-highlight">'+
-    '  <strong> Configuration</strong>'+
-    '  <pre>'+
-    '     <code class="javascript"><%= config %></code>'+
-    '  </pre>'+
-    '  <strong> DOM</strong>'+
-    '  <pre>'+
-    '     <code class="html"><%= demoCode %></code>'+
-    '  </pre>'+
-    '  <strong> Javascript</strong>'+
-    '  <pre>'+
-    '     <code class="javscript"><%= scriptCode %></code>'+
-    '  </pre>'+
-    '</div>'+
+    '<h3><%= title%></h3>' +
+    '<div class="mount-node"><%:= demoCode%><span class="output"></span></div>' +
+    '<div class="doc-code demo-highlight">' +
+    '  <strong> Configuration</strong>' +
+    '  <pre>' +
+    '     <code class="javascript"><%= config %></code>' +
+    '  </pre>' +
+    '  <strong> DOM</strong>' +
+    '  <pre>' +
+    '     <code class="html"><%= demoCode %></code>' +
+    '  </pre>' +
+    '  <strong> Javascript</strong>' +
+    '  <pre>' +
+    '     <code class="javscript"><%= scriptCode %></code>' +
+    '  </pre>' +
+    '</div>' +
     '<hr />';
-  return  $(template(sampleTpl, {
+  return $(template(sampleTpl, {
     title: title,
     config: data.config || '',
     demoCode: data.demoCode,
@@ -54,11 +53,11 @@ function renderSample1() {
   let $renderTo = getMountNode();
 
   let demoCode =
-    '<button class="popup-open btn btn-primary">Open Popup</button>\n'+
-    '<div id="popup1" data-popup=\'{"modalClose": true, "domReadyShow": false}\' class="popup">\n' +
+    '<button class="popup-open btn btn-primary">Open Popup</button>\n' +
+    '<div id="popup1" data-popup=\'{"modalClose": true, "follow":[false, false], "position": [150, 400], "speed": 650, "transition": "slideIn", "transitionClose": "slideBack", "domReadyShow": false}\' class="popup">\n' +
     '   <div class="popup-dialog">\n' +
     '       <div class="popup-hd">\n' +
-    '           <span class="close"><i>X</i></span>\n' +
+    '           <span class="close"><i>×</i></span>\n' +
     '       </div>\n' +
     '       <div class="popup-bd">\n' +
     '           <div class="content">111</div>\n' +
@@ -67,46 +66,46 @@ function renderSample1() {
     '</div>';
 
   let scriptCode =
-    '$result.on(\'click\', \'.popup-open\', function () {\n'+
-    '  var $popup = $(\'#popup1\');\n'+
-    '  var popupInstance = $popup.getInstance();\n'+
-    '  popupInstance.show();\n'+
+    '$result.on(\'click\', \'.popup-open\', function () {\n' +
+    '  var $popup = $(\'#popup1\');\n' +
+    '  var popupInstance = $popup.getInstance();\n' +
+    '  popupInstance.show();\n' +
     '});';
 
   var config =
-  '{\n'+
-    ' amsl: 50,\n'+
-    ' // the value indicate if we auto open popup dialog while DOMReady.\n'+
-    ' domReadyShow: false,\n'+
-    ' appending: true,\n'+
-    ' appendTo: \'body\',\n'+
-    ' autoClose: false,\n'+
-    ' closeClass: \'close\',\n'+
-    ' content: \'ajax\', // ajax, iframe or image\n'+
-    ' contentContainer: false,\n'+
-    ' easing: \'swing\',\n'+
-    ' escClose: true,\n'+
-    ' follow: [true, true], // x, y\n'+
-    ' followEasing: \'swing\',\n'+
-    ' followSpeed: 500,\n'+
-    ' iframeAttr: \'scrolling="no" frameborder="0"\',\n'+
-    ' loadCallback: false,\n'+
-    ' loadData: false,\n'+
-    ' loadUrl: false,\n'+
-    ' modal: true,\n'+
-    ' modalClose: true,\n'+
-    ' modalColor: \'#000\',\n'+
-    ' onClose: false,\n'+
-    ' onOpen: false,\n'+
-    ' opacity: 0.7,\n'+
-    ' position: [\'auto\', \'auto\'], // x, y,\n'+
-    ' positionStyle: \'absolute\', // absolute or fixed\n'+
-    ' scrollBar: true,\n'+
-    ' speed: 250, // open & close speed\n'+
-    ' transition: \'fadeIn\', //transitions: fadeIn, slideDown, slideIn, slideBack\n'+
-    ' transitionClose: false,\n'+
-    ' zIndex: 9997 // popup gets z-index 9999, modal overlay 9998\n'+
-  '}';
+    '{\n' +
+    ' amsl: 50,\n' +
+    ' // the value indicate if we auto open popup dialog while DOMReady.\n' +
+    ' domReadyShow: false,\n' +
+    ' appending: true,\n' +
+    ' appendTo: \'body\',\n' +
+    ' autoClose: false,\n' +
+    ' closeClass: \'close\',\n' +
+    ' content: \'ajax\', // ajax, iframe or image\n' +
+    ' contentContainer: false,\n' +
+    ' easing: \'swing\',\n' +
+    ' escClose: true,\n' +
+    ' follow: [true, true], // x, y\n' +
+    ' followEasing: \'swing\',\n' +
+    ' followSpeed: 500,\n' +
+    ' iframeAttr: \'scrolling="no" frameborder="0"\',\n' +
+    ' loadCallback: false,\n' +
+    ' loadData: false,\n' +
+    ' loadUrl: false,\n' +
+    ' modal: true,\n' +
+    ' modalClose: true,\n' +
+    ' modalColor: \'#000\',\n' +
+    ' onClose: false,\n' +
+    ' onOpen: false,\n' +
+    ' opacity: 0.7,\n' +
+    ' position: [\'auto\', \'auto\'], // x, y,\n' +
+    ' positionStyle: \'absolute\', // absolute or fixed\n' +
+    ' scrollBar: true,\n' +
+    ' speed: 250, // open & close speed\n' +
+    ' transition: \'fadeIn\', //transitions: fadeIn, slideDown, slideIn, slideBack\n' +
+    ' transitionClose: false,\n' +
+    ' zIndex: 9997 // popup gets z-index 9999, modal overlay 9998\n' +
+    '}';
   let $result = getSampleTemplate('直接dom data api', {
     demoCode: demoCode,
     config: config,
@@ -130,46 +129,45 @@ function renderSample2() {
   let $renderTo = getMountNode();
 
   let demoCode =
-    '<button class="alert-open btn btn-primary">Dialog Alert</button>\n'
-    ;
+    '<button class="alert-open btn btn-primary">Dialog Alert</button>\n';
   let scriptCode =
-    '// dialog alert open \n'+
-    '$result.on(\'click\', \'.alert-open\', function () {\n'+
-    '  dialog.alert({\n'+
-    '    onOpen: function () {\n'+
-    '      $result.find(\'.output\').html(\'on open..\');\n'+
-    '    },\n'+
-    '    onClose: function () {\n'+
-    '      $result.find(\'.output\').html(\'on close..\');\n'+
-    '    },\n'+
-    '    onActionClicked: function ($btn) {\n'+
-    '      $result.find(\'.output\').html($btn.data(\'trigger\'));\n'+
-    '      // clicked close dialog.\n'+
-    '      this.close();\n'+
-    '    }\n'+
-    '  });\n'+
+    '// dialog alert open \n' +
+    '$result.on(\'click\', \'.alert-open\', function () {\n' +
+    '  dialog.alert({\n' +
+    '    onOpen: function () {\n' +
+    '      $result.find(\'.output\').html(\'on open..\');\n' +
+    '    },\n' +
+    '    onClose: function () {\n' +
+    '      $result.find(\'.output\').html(\'on close..\');\n' +
+    '    },\n' +
+    '    onActionClicked: function ($btn) {\n' +
+    '      $result.find(\'.output\').html($btn.data(\'trigger\'));\n' +
+    '      // clicked close dialog.\n' +
+    '      this.close();\n' +
+    '    }\n' +
+    '  });\n' +
     '});\n';
 
   // render dialog configuration.
   var config =
-    '{\n'+
-    '  onOpen: false,\n'+
-    '  onClose: false,\n'+
-    '  onActionClicked: false,\n'+
-    '  autoClose: false,\n'+
-    '  modal: true,\n'+
-    '  modalClose: false,\n'+
-    '  classes: "",\n'+
-    '  // if equals false, don\'t show header.\n'+
-    '  header: {\n'+
-    '    showClose: true,\n'+
-    '    html: "Your Header"\n'+
-    '  },\n'+
-    '  body: "Your dialog body",\n'+
-    '  // if equals false, don\'t show footer.\n'+
-    '  footer: {\n'+
-    '    html: \'<button class="btn btn-primary btn-sm btn-popup" data-trigger="ok">确定</button>\'\n'+
-    '  }\n'+
+    '{\n' +
+    '  onOpen: false,\n' +
+    '  onClose: false,\n' +
+    '  onActionClicked: false,\n' +
+    '  autoClose: false,\n' +
+    '  modal: true,\n' +
+    '  modalClose: false,\n' +
+    '  classes: "",\n' +
+    '  // if equals false, don\'t show header.\n' +
+    '  header: {\n' +
+    '    showClose: true,\n' +
+    '    html: "Your Header"\n' +
+    '  },\n' +
+    '  body: "Your dialog body",\n' +
+    '  // if equals false, don\'t show footer.\n' +
+    '  footer: {\n' +
+    '    html: \'<button class="btn btn-primary btn-sm btn-popup" data-trigger="ok">确定</button>\'\n' +
+    '  }\n' +
     '}';
 
   let $result = getSampleTemplate('Dialog alert', {
@@ -207,51 +205,50 @@ function renderSample3() {
   let $renderTo = getMountNode();
 
   let demoCode =
-    '<button class="confirm-open btn btn-primary">Dialog Confirm</button>'
-    ;
+    '<button class="confirm-open btn btn-primary">Dialog Confirm</button>';
   let scriptCode =
-    '// for dalog confirm....\n'+
-    '$result.on(\'click\', \'.confirm-open\', function () {\n'+
-    '  dialog.confirm({\n'+
-    '    onOpen: function () {\n'+
-    '      $result.find(\'.output\').html(\'on open..\');\n'+
-    '    },\n'+
-    '    onClose: function () {\n'+
-    '      $result.find(\'.output\').html(\'on close..\');\n'+
-    '    },\n'+
-    '    onConfirm: function ($target) {\n'+
-    '      $result.find(\'.output\').html(\'on confirm()...\' + $target.data("trigger"));\n'+
-    '      // clicked close dialog.\n'+
-    '      this.close();\n'+
-    '    },\n'+
-    '    onCancel: function ($target) {\n'+
-    '      $result.find(\'.output\').html(\'on onCancel()...\' + $target.data("trigger"));\n'+
-    '      this.close();\n'+
-    '    }\n'+
-    '  });\n'+
+    '// for dalog confirm....\n' +
+    '$result.on(\'click\', \'.confirm-open\', function () {\n' +
+    '  dialog.confirm({\n' +
+    '    onOpen: function () {\n' +
+    '      $result.find(\'.output\').html(\'on open..\');\n' +
+    '    },\n' +
+    '    onClose: function () {\n' +
+    '      $result.find(\'.output\').html(\'on close..\');\n' +
+    '    },\n' +
+    '    onConfirm: function ($target) {\n' +
+    '      $result.find(\'.output\').html(\'on confirm()...\' + $target.data("trigger"));\n' +
+    '      // clicked close dialog.\n' +
+    '      this.close();\n' +
+    '    },\n' +
+    '    onCancel: function ($target) {\n' +
+    '      $result.find(\'.output\').html(\'on onCancel()...\' + $target.data("trigger"));\n' +
+    '      this.close();\n' +
+    '    }\n' +
+    '  });\n' +
     '});';
 
   var config =
-  '{\n'+
-    '  onOpen: false,\n'+
-    '  onClose: false,\n'+
-    '  onConfirm: false,\n'+
-    '  onCancel: false,\n'+
-    '  onActionClicked: false,\n'+
-    '  autoClose: false,\n'+
-    '  modal: true,\n'+
-    '  modalClose: false,\n'+
-    '  classes: "",\n'+
-    '  // if equals false, don\'t show header.\n'+
-    '  header: {\n'+
-    '    showClose: true,\n'+
-    '    html: "Your Header"\n'+
-    '  },\n'+
-    '  body: "Your dialog body",\n'+
-    '  // if equals false, don\'t show footer.\n'+
-    '  footer: {\n'+
-    '    html: \'<button class="btn btn-primary btn-sm btn-popup" data-trigger="ok">确定</button>\'\n'+
-    '  }\n'+
+    '{\n' +
+    '  onOpen: false,\n' +
+    '  onClose: false,\n' +
+    '  onConfirm: false,\n' +
+    '  onCancel: false,\n' +
+    '  onActionClicked: false,\n' +
+    '  autoClose: false,\n' +
+    '  modal: true,\n' +
+    '  modalClose: false,\n' +
+    '  classes: "",\n' +
+    '  // if equals false, don\'t show header.\n' +
+    '  header: {\n' +
+    '    showClose: true,\n' +
+    '    html: "Your Header"\n' +
+    '  },\n' +
+    '  body: "Your dialog body",\n' +
+    '  // if equals false, don\'t show footer.\n' +
+    '  footer: {\n' +
+    '    html: \'<button class="btn btn-primary btn-sm btn-popup" data-trigger="ok">确定</button>\'\n' +
+    '  }\n' +
     '}';
   let $result = getSampleTemplate('Dialog confirm', {
     demoCode: demoCode,
@@ -286,9 +283,76 @@ function renderSample3() {
   });
 
 }
+
+function renderSample4() {
+
+  let $renderTo = getMountNode();
+
+  let demoCode =
+    '<button class="spinner-open btn btn-primary">Spinner Dialog</button>&nbsp;&nbsp;\n'+
+    '<button class="spinner-container-open btn btn-primary">Spinner Dialog With container</button>\n'+
+    '<div class="spinner-container" style="border: 1px solid #ccc; position: relative; height: 200px; width: 100%;"></div>'
+  let scriptCode =
+    'var spinnerInstanace = null;\n'+
+    '// for dialog spinner.\n'+
+    '$result.on(\'click\', \'.spinner-open\', function () {\n'+
+    '  spinnerInstanace = dialog.spinner({\n'+
+    '    body: \'加载中....\',\n'+
+    '    onOpen: function () {\n'+
+    '      $result.find(\'.output\').html(\'on open..\');\n'+
+    '      setTimeout(function () {\n'+
+    '        spinnerInstanace.close();\n'+
+    '      }, 5000);\n'+
+    '    },\n'+
+    '    onClose: function () {\n'+
+    '      $result.find(\'.output\').html(\'on close..\');\n'+
+    '    }\n'+
+    '  });\n'+
+    '});';
+
+  var config =
+    '{\n' +
+    '  body: \'loading...\',\n'+
+    '  appendTo: container || \'body\',\n'+
+    '  modalColor: o.modalColor,\n'+
+    '  opacity: o.opacity,\n'+
+    '  onOpen: onOpen,\n'+
+    '  onClose: onClose\n'+
+    '}';
+  let $result = getSampleTemplate('Spinner Dialog', {
+    demoCode: demoCode,
+    config: config,
+    scriptCode: scriptCode
+  });
+
+  $renderTo.append($result);
+
+  UI.run(Popup.getInstanceName());
+
+  var spinnerInstanace = null;
+  // for dialog spinner.
+  $result.on('click', '.spinner-open, .spinner-container-open', function () {
+    var options = {
+      body: '加载中....',
+      modalColor: 'greenYellow',
+      onOpen: function () {
+        $result.find('.output').html('on open..');
+        setTimeout(function () {
+          spinnerInstanace.close();
+        }, 2000);
+      },
+      onClose: function () {
+        $result.find('.output').html('on close..');
+      }
+    };
+    if ($(this).is('.spinner-container-open')) {
+      options.appendTo = '.spinner-container';
+    }
+    spinnerInstanace = dialog.spinner(options);
+  });
+}
 module.exports = {
   render: function () {
-
     // render introductions.
     renderIntroductions();
 
@@ -300,5 +364,6 @@ module.exports = {
 
     renderSample3();
 
+    renderSample4();
   }
 };

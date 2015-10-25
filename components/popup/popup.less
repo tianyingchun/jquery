@@ -93,7 +93,19 @@
   background: #f8f8f8;
 }
 
-.popup-alert {}
+.popup.popup-alert {}
 
-.popup-confirm {}
+.popup.popup-confirm {}
 
+@spinner-width: 120px;
+@spinner-height: 30px;
+.popup.popup-spinner {
+  min-height: @spinner-height;
+  min-width: @spinner-width;
+  .popup-bd {
+    padding: 5px 10px;
+    height: @spinner-height;
+    width: @spinner-width;
+    font-size: 13px;
+  }
+}

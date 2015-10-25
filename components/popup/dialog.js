@@ -5,7 +5,7 @@ var Popup = require("./popup");
 
 var componentName = 'alert';
 
-var alertTpl =
+var popupTpl =
   '<div class="popup <%=type%> <%=classes%>">' +
   ' <div class="popup-dialog">' +
   '   <% if(header) { %>  ' +
@@ -17,7 +17,7 @@ var alertTpl =
   '   </div>' +
   '   <% }%>  ' +
   '     <div class="popup-bd">' +
-  '         <%=body %>' +
+  '         <%:=body %>' +
   '     </div>' +
   '   <% if(footer) { %>  ' +
   '     <div class="popup-footer">' +
@@ -34,6 +34,9 @@ var DEFAULTS = {
   autoClose: false,
   modal: true,
   modalClose: false,
+  modalColor: '#000',
+  opacity: 0.7,
+  appendTo: 'body',
   classes: "",
   // if equals false, don't show header.
   header: {
@@ -60,6 +63,15 @@ var DEFAULTS_CONFIRM = {
   }
 };
 
+var DEFAULTS_SPINNER = {
+  header:null,
+  footer: null,
+  body: 'loading...',
+  appendTo: 'body',
+  onOpen: false,
+  onClose: false
+};
+
 function triggerCall(func, arg) {
   $.isFunction(func) && func.call(this, arg);
 };
@@ -69,10 +81,10 @@ function dialog(type, options) {
   var containerClass = '.' + type;
 
   var o = $.extend({type: type}, DEFAULTS, options);
-
-  var $element = $(containerClass);
+  var $context = $(o.appendTo);
+  var $element = $(containerClass, $context);
   if (!$element.size()) {
-    $element = $(template(alertTpl, o)).appendTo($("body"));
+    $element = $(template(popupTpl, o)).appendTo($context);
   }
 
   // the options of popup.
@@ -85,10 +97,12 @@ function dialog(type, options) {
       triggerCall.call(this, o.onClose);
       unbindEvents(this);
     },
-
+    appendTo: o.appendTo,
+    appending: true,
     // for confirm dialog box.
     onConfirm: o.onConfirm,
-
+    modalColor: o.modalColor,
+    opacity: o.opacity,
     // for cancel dialog box.
     onCancel: o.onCancel,
     modal: o.modal,
@@ -115,10 +129,27 @@ function dialog(type, options) {
 module.exports = {
   alert: function (options) {
     // show alert popup and return instance.
-    dialog('popup-alert', options);
+    return dialog('popup-alert', options);
   },
   confirm: function (options) {
     // show confirm popup and return instance.
-    dialog('popup-confirm', $.extend({}, DEFAULTS_CONFIRM, options));
+    return dialog('popup-confirm', $.extend({}, DEFAULTS_CONFIRM, options));
+  },
+  // message is required, container is optional
+  // {
+  //   body: message,
+  //   appendTo: container || 'body',
+  //   onOpen: onOpen,
+  //   onClose: onClose,
+  //   modalColor: o.modalColor,
+  //   opacity: o.opacity,
+  // }
+  // {message, container, onOpen, onClose}
+  spinner: function (options) {
+    var _options = $.extend({}, DEFAULTS_SPINNER, options);
+    var body = _options.body;
+    _options.body = '<span class="glyph-icon glyph-spin glyph-spinner"></span> '+ body;
+
+    return dialog('popup-spinner', _options);
   }
 };

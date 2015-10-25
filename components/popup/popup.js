@@ -191,16 +191,26 @@ var Popup = ComponentClass.extend({
         break;
     }
   },
+  // flag if current dialog will rendered into specificed small container instead into body.
+  showPopupWithInContainer : function () {
+    var o = this.options;
+    if (o.appendTo != 'body' && o.appending == true)  {
+      return true;
+    } else {
+      return false;
+    }
+  },
   open: function () {
     var o      = this.options;
     var $popup = this.$element;
     var id     = this.id;
     // MODAL OVERLAY
     if (o.modal) {
+
       $('<div class="popup-modal ' + id + '"></div>')
         .css({
           backgroundColor: o.modalColor,
-          position: 'fixed',
+          position: this.showPopupWithInContainer() ? 'absolute': 'fixed',
           top: 0,
           right: 0,
           bottom: 0,
@@ -214,12 +224,22 @@ var Popup = ComponentClass.extend({
 
     // POPUP
     this._calcPosition();
-
+    // if inside an specific div contianer, not append to body.
+    var left = o.transition == 'slideIn' || o.transition == 'slideBack' ? (o.transition == 'slideBack' ? d.scrollLeft() + wW : (hPos + width) * -1) : getLeftPos(!(!o.follow[0] && fixedHPos || fixedPosStyle));
+    var top = o.transition == 'slideDown' || o.transition == 'slideUp' ? (o.transition == 'slideUp' ? d.scrollTop() + wH : vPos + height * -1) : getTopPos(!(!o.follow[1] && fixedVPos || fixedPosStyle));
+    if (this.showPopupWithInContainer())  {
+      // left = o.appending
+      var pHeight = $popup.height();
+      var pWidth = $popup.width();
+      var $container = $popup.parent(o.appendTo);
+      left = ($container.width() - pWidth) /2;
+      top = ($container.height() - pHeight) /2;
+    }
     $popup
       .css({
-        'left': o.transition == 'slideIn' || o.transition == 'slideBack' ? (o.transition == 'slideBack' ? d.scrollLeft() + wW : (hPos + width) * -1) : getLeftPos(!(!o.follow[0] && fixedHPos || fixedPosStyle)),
+        'left': left,
         'position': o.positionStyle || 'absolute',
-        'top': o.transition == 'slideDown' || o.transition == 'slideUp' ? (o.transition == 'slideUp' ? d.scrollTop() + wH : vPos + height * -1) : getTopPos(!(!o.follow[1] && fixedVPos || fixedPosStyle)),
+        'top': top,
         'z-index': o.zIndex + popups + 1
       }).each(function () {
         if (o.appending) {
