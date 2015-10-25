@@ -7,6 +7,8 @@ var OtpDemo = require('./otp/demo');
 var PaginationDemo = require('./pagination/demo');
 var TimelineDemo = require('./timeline/demo');
 var SliderDemo = require('./slider/demo');
+var CollapseDemo = require('./collapse/demo');
+
 
 module.exports = {
   ButtonDemo,
@@ -17,5 +19,6 @@ module.exports = {
   OtpDemo,
   PaginationDemo,
   TimelineDemo,
-  SliderDemo
+  SliderDemo,
+  CollapseDemo
 };

@@ -6,6 +6,7 @@ var Validate = require('./validate');
 var Pagination = require('./pagination');
 var Timeline = require('./timeline');
 var Slider = require('./slider');
+var Collapse = require('./collapse');
 
 module.exports = {
   Button: Button,
@@ -15,5 +16,6 @@ module.exports = {
   Validate: Validate,
   Pagination: Pagination,
   Timeline: Timeline,
-  Slider: Slider
+  Slider: Slider,
+  Collapse: Collapse
 };
