@@ -136,7 +136,8 @@ function renderSample1() {
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-select-1">下拉多选框</label>\n'+
-    '      <select name="select" id="doc-select-1">\n'+
+    '      <select name="drpProvince" id="doc-select-1">\n'+
+    '        <option value="">请选择下拉框...</option>\n'+
     '        <option value="option1">选项一...</option>\n'+
     '        <option value="option2">选项二.....</option>\n'+
     '        <option value="option3">选项三........</option>\n'+
@@ -233,6 +234,9 @@ function renderSample1() {
       //  the name-field mapping, the `mobile` is form field name.
       // <input name="mobile" maxlength="11"  required  type="text" placeholder="请填写您的真实手机，方便我们与您取得联系" />
       mobile: 'isMobile',
+      drpProvince: {
+        required: true
+      },
       email: {
         required: true,
         email: true
@@ -245,6 +249,9 @@ function renderSample1() {
     messages: {
       name:"请填写真实姓名",
       email: "请填写正确的邮箱地址",
+      drpProvince: {
+        required: "请选择下拉框值"
+      },
       mobile: {
         required:"请填写手机号码",
         isMobile: "请填写正确的手机号码"

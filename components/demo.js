@@ -8,6 +8,7 @@ var PaginationDemo = require('./pagination/demo');
 var TimelineDemo = require('./timeline/demo');
 var SliderDemo = require('./slider/demo');
 var CollapseDemo = require('./collapse/demo');
+var TabsDemo = require('./tabs/demo');
 
 
 module.exports = {
@@ -20,5 +21,6 @@ module.exports = {
   PaginationDemo,
   TimelineDemo,
   SliderDemo,
-  CollapseDemo
+  CollapseDemo,
+  TabsDemo
 };

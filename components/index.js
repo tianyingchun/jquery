@@ -7,6 +7,7 @@ var Pagination = require('./pagination');
 var Timeline = require('./timeline');
 var Slider = require('./slider');
 var Collapse = require('./collapse');
+var Tabs = require('./tabs');
 
 module.exports = {
   Button: Button,
@@ -17,5 +18,6 @@ module.exports = {
   Pagination: Pagination,
   Timeline: Timeline,
   Slider: Slider,
-  Collapse: Collapse
+  Collapse: Collapse,
+  Tabs: Tabs
 };
