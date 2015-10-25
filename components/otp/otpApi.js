@@ -92,8 +92,8 @@ var OtpAPI = {
   trySendOTPApi: "",
   getRequestUrl: getRequestUrl,
 
-  // expose some usefull dto for otp apis.
-  // Note. you should use call() specificed window.OtpApi as current context scope.
+  // expose some dto for otp apis.
+  // Note. we can override dtos via pass as options to otp.otpService
   dtos: {
     baseAjaxDto: ajaxDataFilter,
     baseAjaxTrySendOTPDto: ajaxTrySendOTPDataFilter,
@@ -127,7 +127,7 @@ var OtpAPI = {
     $.extend(data, extraData);
     // we can defined api name to route specificed api path.
     var _sendOTPApiUrl = this.trySendOTPApi || "/otp/changeSendOtp";
-
+    var _this = this;
     $.ajax({
       url: getRequestUrl.call(this, _sendOTPApiUrl),
       contentType: "application/json",
@@ -136,7 +136,7 @@ var OtpAPI = {
       data: JSON.stringify(data),
       processData: false
     }).then(function (data) {
-      if (cb) cb(ajaxTrySendOTPDataFilter.call(OtpAPI, data));
+      if (cb) cb(_this.dtos.baseAjaxTrySendOTPDto.call(OtpAPI, data));
     }, function (data) {
       // give error message here maybe!
       // if (cb) cb(ajaxDataFilter(data));
@@ -151,6 +151,8 @@ var OtpAPI = {
   refreshCaptcha: function (extraData, cb) {
     var data = {};
     $.extend(data, extraData);
+    var _this = this;
+
     $.ajax({
       url: getRequestUrl.call(this, "/otp/refreshCaptcha"),
       contentType: "application/json",
@@ -159,7 +161,7 @@ var OtpAPI = {
       data: JSON.stringify(data),
       processData: false
     }).then(function (data) {
-      if (cb) cb(ajaxRefreshCaptchaDataFilter.call(OtpAPI, data));
+      if (cb) cb(_this.dtos.baseAjaxRefreshCaptchaDto.call(OtpAPI, data));
     }, function (data) {
       // give error message here maybe!
       // if (cb) cb(ajaxDataFilter(data));
@@ -175,6 +177,8 @@ var OtpAPI = {
    */
   verifyCaptcha: function (captcha, extraData, cb) {
     $.extend(captcha, extraData);
+    var _this = this;
+
     $.ajax({
       url: getRequestUrl.call(this, "/otp/verifyCaptcha"),
       contentType: "application/json",
@@ -183,7 +187,7 @@ var OtpAPI = {
       data: JSON.stringify(captcha),
       processData: false
     }).then(function (data) {
-      if (cb) cb(ajaxVerifyCaptchaDataFilter.call(OtpAPI, data));
+      if (cb) cb(_this.dtos.baseAjaxVerifyCaptchaDto.call(OtpAPI, data));
     }, function (data) {
       // give error message here maybe!
       // if (cb) cb(ajaxDataFilter(data));

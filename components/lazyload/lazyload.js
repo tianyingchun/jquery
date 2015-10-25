@@ -355,7 +355,7 @@ Lazyload.DEFAULTS = {
 // Register plugin.
 createPlugin(componentName, Lazyload);
 
-UI.ready(function dropdown(context) {
+UI.ready(function lazyload(context) {
 
   // Note. for performance issue, we only attach data-lazyload="{}" to root DOMNode that contains all lazyload image with attribute data-original="the real image url"
   var $lazyload = $('[data-lazyload]', context);

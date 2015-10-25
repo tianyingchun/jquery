@@ -5,6 +5,7 @@ var Lazyload = require('./lazyload');
 var Validate = require('./validate');
 var Pagination = require('./pagination');
 var Timeline = require('./timeline');
+var Slider = require('./slider');
 
 module.exports = {
   Button: Button,
@@ -13,5 +14,6 @@ module.exports = {
   Lazyload: Lazyload,
   Validate: Validate,
   Pagination: Pagination,
-  Timeline: Timeline
+  Timeline: Timeline,
+  Slider: Slider
 };

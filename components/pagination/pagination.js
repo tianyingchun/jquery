@@ -418,7 +418,7 @@ Pagination.DEFAULTS = {
 // Register plugin.
 createPlugin(componentName, Pagination);
 
-UI.ready(function dropdown(context) {
+UI.ready(function pagination(context) {
   var $pagination = $('[data-pagination]', context);
   // auto initialize component via data-api.
   $pagination[componentName]();
