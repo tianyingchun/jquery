@@ -87,7 +87,7 @@ function getRequestUrl(url) {
 
 var OtpAPI = {
   //"http://192.168.11.10:8080";
-  apiRoot: "http://localhost:4001",
+  apiRoot: "http://localhost:4001/api",
   // we can customized sendOTP http request api name.
   trySendOTPApi: "",
   getRequestUrl: getRequestUrl,
@@ -126,7 +126,7 @@ var OtpAPI = {
 
     $.extend(data, extraData);
     // we can defined api name to route specificed api path.
-    var _sendOTPApiUrl = this.trySendOTPApi || "/otp/changeSendOtp";
+    var _sendOTPApiUrl = this.trySendOTPApi || "/otp/sendOtp";
     var _this = this;
     $.ajax({
       url: getRequestUrl.call(this, _sendOTPApiUrl),

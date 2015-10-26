@@ -279,7 +279,7 @@ var Otp = ComponentClass.extend({
 Otp.DEFAULTS = {
   // allow us customized otp service.
   otpService: {
-    apiRoot: "http://localhost:4001",
+    apiRoot: "http://localhost:4001/api",
     trySendOTPApi: "" // `/otp/changeSendOtp`
   },
   // The value indicates if we need to auto send otp message while captcha varify success!

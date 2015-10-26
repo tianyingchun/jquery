@@ -22,7 +22,7 @@ function renderIntroductions() {
 '{\n'+
       '  // allow us customized otp service.\n'+
       '  otpService: {\n'+
-      '    apiRoot: "http://localhost:4001",\n'+
+      '    apiRoot: "http://localhost:4001/apu",\n'+
       '    trySendOTPApi: "" // `/otp/changeSendOtp`\n'+
       '  },\n'+
       '  // The value indicates if we need to auto send otp message while captcha varify success!\n'+
