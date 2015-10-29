@@ -73,14 +73,27 @@ function renderSample1() {
     '    <div class="form-group">\n'+
     '      <label for="doc-ipt-email-1">邮件</label>\n'+
     '      <input name="email" type="email" class="form-field" placeholder="输入电子邮件">\n'+
+    '     <span class="success">success</span>'+
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-ipt-email-1">手机号码</label>\n'+
     '      <input name="mobile" type="text" class="form-field" placeholder="输入手机号码">\n'+
+    '     <span class="success">success</span>'+
+    '    </div>\n'+
+    '    <div class="form-group">\n'+
+    '      <label for="doc-ipt-email-1">身份证</label>\n'+
+    '      <input name="idcard" type="text" class="form-field" placeholder="输入身份证">\n'+
+    '     <span class="success">success</span>'+
+    '    </div>\n'+
+    '    <div class="form-group">\n'+
+    '      <label for="doc-ipt-email-1">银行卡</label>\n'+
+    '      <input name="bankcard" type="text" class="form-field" placeholder="输入银行卡">\n'+
+    '     <span class="success">success</span>'+
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-ipt-pwd-1">密码</label>\n'+
     '      <input name="password" type="password" class="form-field" id="doc-ipt-pwd-1" placeholder="设置个密码吧">\n'+
+    '     <span class="success">success</span>'+
     '    </div>\n'+
     '    <div class="form-group">\n'+
     '      <label for="doc-ipt-file-1">原生文件上传域</label>\n'+
@@ -237,6 +250,18 @@ function renderSample1() {
       drpProvince: {
         required: true
       },
+      idcard: {
+        required: true,
+        idCard: true
+      },
+      bankcard: {
+        required: true,
+        bankCard: true
+      },
+      password: {
+        required: true,
+        paypwd: true
+      },
       email: {
         required: true,
         email: true
@@ -251,6 +276,18 @@ function renderSample1() {
       email: "请填写正确的邮箱地址",
       drpProvince: {
         required: "请选择下拉框值"
+      },
+      idcard: {
+        required:"请填写身份证号",
+        idCard: "请输入正确的身份证号"
+      },
+      bankcard: {
+        required:"请填写银行卡",
+        bankCard: "请输入正确的银行卡"
+      },
+      password: {
+        required: "请输入6-8位密码",
+        paypwd: "请输入6-8位密码"
       },
       mobile: {
         required:"请填写手机号码",

@@ -1,18 +1,57 @@
 var $ = require('jquery');
 var validator = require('./jquery.validate');
 
+//
+// all regex rules const definition
+// --------------------------------------------------------------------------
+var regexRuleConst = {
+  "postcode": /^[1-9][0-9]{5}$/, //邮政编码
+  "idcard": /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/, //身份证号码验证表达式
+  "chCode": /[^\u4e00-\u9fa5\s+]/ig, //所有字符必须为中文字符
+  "enCode": /^[a-zA-Z\s]+$/, // 所有的英文字符
+  ///^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(14[0-9]{1}))+\d{8})$/
+  "mobile": /^1[3-9][0-9]\d{8}$/, //验证手机号码/^1[3|4|5|8][0-9]\d{4,8}$/
+  "empty": /^\s+|\s+$/ig, // 移除字符串空字符串
+  "url": /^https?:\/\//,
+  "bankcard": /^\d{12,}$/,
+  "captchaInput": /^.{4}$/,//TOP 图片验证码的验证表达式
+  "paypwd": /^[a-zA-Z0-9]{6,8}$///
+};
+
 // extends validator methods.
-validator.addMethod('isMobile', function(value, element) {
+validator.addMethod('isMobile', function (value, element) {
   var length = value.length;
-  var mobile = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1})|(14[0-9]{1}))+\d{8})$/;
+  var mobile = regexRuleConst.mobile;
   return (length == 11 && mobile.exec(value)) ? true : false;
 }, "请填写正确的手机号码");
 
+// QQ 号
 validator.addMethod('isQQ', function (value, element) {
   var qq = /^\d+$/;
   if (!value) return true;
   return qq.exec(value) ? true : false;
 }, "请填写正确的QQ号码");
+
+// 银行卡号
+validator.addMethod('bankCard', function (value, element) {
+  var bankCard = regexRuleConst.bankcard;
+  if (!value) return true;
+  return bankCard.exec(value) ? true : false;
+}, "请填写正确的银行卡号");
+
+// 身份证号
+validator.addMethod('idCard', function (value, element) {
+  var idcard = regexRuleConst.idcard;
+  if (!value) return true;
+  return idcard.exec(value) ? true : false;
+}, "请填写正确的身份证号");
+
+// 支付密码
+validator.addMethod('paypwd', function (value, element) {
+  var paypwd = regexRuleConst.paypwd;
+  if (!value) return true;
+  return paypwd.exec(value) ? true : false;
+}, "请填写6-8位支付密码");
 
 
 // override validator messages.
