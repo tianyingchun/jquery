@@ -6,6 +6,7 @@ var ValidateDemo = require('./validate/demo');
 var OtpDemo = require('./otp/demo');
 var PaginationDemo = require('./pagination/demo');
 var TimelineDemo = require('./timeline/demo');
+var StepsDemo = require('./steps/demo');
 var SliderDemo = require('./slider/demo');
 var CollapseDemo = require('./collapse/demo');
 var TabsDemo = require('./tabs/demo');
@@ -20,6 +21,7 @@ module.exports = {
   OtpDemo,
   PaginationDemo,
   TimelineDemo,
+  StepsDemo,
   SliderDemo,
   CollapseDemo,
   TabsDemo
