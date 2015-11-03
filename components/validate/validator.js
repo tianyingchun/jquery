@@ -84,17 +84,17 @@ validator.DEFAULTS = {
   validClass: "success",
   errorElement: 'span',
   errorPlacement: function(error, element) {
-    element.parent('.form-group').addClass('form-error').append(error);
+    element.parents('.form-group').addClass('form-error').append(error);
   },
   highlight: function(element, errorClass, validClass) {
     // console.log('highlight', element, errorClass, validClass)
-    $(element).parent('.form-group').addClass(formErrorClass).removeClass(formValidClass);
+    $(element).parents('.form-group').addClass(formErrorClass).removeClass(formValidClass);
     // $(element.form).find("label[for=" + element.id + "]").addClass(errorClass);
   },
   unhighlight: function(element, errorClass, validClass) {
     // console.log('unhighlight',element, errorClass, validClass)
 
-    $(element).parent('.form-group').removeClass(formErrorClass).addClass(formValidClass);
+    $(element).parents('.form-group').removeClass(formErrorClass).addClass(formValidClass);
     // $(element.form).find("label[for=" + element.id + "]").removeClass(errorClass);
   }
 }
