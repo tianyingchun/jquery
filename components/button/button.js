@@ -66,6 +66,8 @@ var Button = ComponentClass.extend({
       }
 
       if (changed) {
+        // add attribute checked for input checkbox, radio button for form submit.
+        $input.attr('checked', !$btn.hasClass('active') ? 'checked' : '');
         $input.prop('checked', !$btn.hasClass('active')).trigger('change');
       }
     }
