@@ -1,13 +1,13 @@
 var $ = require('jquery');
 // uniform data converter
-var ajaxDataFilter = function (data) {
+var ajaxDataFilter = function(data) {
 
   var _resp = {},
     _rawResult = $.extend({}, data);
 
   // first find result["data"].
   var _rawData = _rawResult.data || _rawResult;
-  var _rawCode = _rawResult.code || "00000"; // 00000 表示业务逻辑成功
+  var _rawCode = _rawResult.code || "0000"; // 0000 表示业务逻辑成功
   var _rawMessage = _rawResult.message || "";
 
   _resp = {
@@ -15,14 +15,14 @@ var ajaxDataFilter = function (data) {
     message: _rawMessage,
     data: _rawData
   };
-  if (_resp.code == "00000") {
+  if (_resp.code == "0000") {
     _resp.code = "000000";
   }
   // $log.debug(data, status, headers, config);
   return _resp;
 };
 // DTO for trySendOTP().
-var ajaxTrySendOTPDataFilter = function (data) {
+var ajaxTrySendOTPDataFilter = function(data) {
 
   // base DTO.
   var result = ajaxDataFilter.call(this, data);
@@ -51,7 +51,7 @@ var ajaxTrySendOTPDataFilter = function (data) {
   return result;
 };
 //DTO for refreshCaptcha().
-var ajaxRefreshCaptchaDataFilter = function (data) {
+var ajaxRefreshCaptchaDataFilter = function(data) {
   var result = ajaxDataFilter.call(this, data);
   if (result.code == "000000") {
     // return new captcha.
@@ -65,7 +65,7 @@ var ajaxRefreshCaptchaDataFilter = function (data) {
   return result;
 };
 //DTO for verifyCaptcha().
-var ajaxVerifyCaptchaDataFilter = function (data) {
+var ajaxVerifyCaptchaDataFilter = function(data) {
   var result = ajaxDataFilter.call(this, data);
   if (result.code == "000000") {
     // return new captchaToken property.
@@ -85,11 +85,15 @@ function getRequestUrl(url) {
   return url;
 }
 
-var OtpAPI = {
+function OtpAPI() {
   //"http://192.168.11.10:8080";
-  apiRoot: "http://localhost:4001/api",
+  this.apiRoot = "http://localhost:4001/api";
   // we can customized sendOTP http request api name.
-  trySendOTPApi: "",
+  this.trySendOTPApi = "";
+}
+
+$.extend(OtpAPI.prototype, {
+
   getRequestUrl: getRequestUrl,
 
   // expose some dto for otp apis.
@@ -111,7 +115,7 @@ var OtpAPI = {
    * else
    *     {captchaId, captchaUrl}
    */
-  trySendOTP: function (phone, captchaToken, deviceId, extraData, cb) {
+  trySendOTP: function(phone, captchaToken, deviceId, extraData, cb) {
     var data = {
       phone: phone,
     };
@@ -135,9 +139,9 @@ var OtpAPI = {
       dataType: 'json',
       data: JSON.stringify(data),
       processData: false
-    }).then(function (data) {
-      if (cb) cb(_this.dtos.baseAjaxTrySendOTPDto.call(OtpAPI, data));
-    }, function (data) {
+    }).then(function(data) {
+      if (cb) cb(_this.dtos.baseAjaxTrySendOTPDto.call(_this, data));
+    }, function(data) {
       // give error message here maybe!
       // if (cb) cb(ajaxDataFilter(data));
       throw new Error("status code:" + data.status);
@@ -148,7 +152,7 @@ var OtpAPI = {
    * @method refreshCaptcha
    * @param  {Function} cb    callback
    */
-  refreshCaptcha: function (extraData, cb) {
+  refreshCaptcha: function(extraData, cb) {
     var data = {};
     $.extend(data, extraData);
     var _this = this;
@@ -160,9 +164,9 @@ var OtpAPI = {
       dataType: 'json',
       data: JSON.stringify(data),
       processData: false
-    }).then(function (data) {
-      if (cb) cb(_this.dtos.baseAjaxRefreshCaptchaDto.call(OtpAPI, data));
-    }, function (data) {
+    }).then(function(data) {
+      if (cb) cb(_this.dtos.baseAjaxRefreshCaptchaDto.call(_this, data));
+    }, function(data) {
       // give error message here maybe!
       // if (cb) cb(ajaxDataFilter(data));
       throw new Error("status code:" + data.status);
@@ -175,7 +179,7 @@ var OtpAPI = {
    * @param  {object}       extraData: {} anything.
    * @param  {Function} cb  callback (captchaToken)
    */
-  verifyCaptcha: function (captcha, extraData, cb) {
+  verifyCaptcha: function(captcha, extraData, cb) {
     $.extend(captcha, extraData);
     var _this = this;
 
@@ -186,14 +190,15 @@ var OtpAPI = {
       dataType: 'json',
       data: JSON.stringify(captcha),
       processData: false
-    }).then(function (data) {
-      if (cb) cb(_this.dtos.baseAjaxVerifyCaptchaDto.call(OtpAPI, data));
-    }, function (data) {
+    }).then(function(data) {
+      if (cb) cb(_this.dtos.baseAjaxVerifyCaptchaDto.call(_this, data));
+    }, function(data) {
       // give error message here maybe!
       // if (cb) cb(ajaxDataFilter(data));
       throw new Error("status code:" + data.status);
     });
   }
-};
+});
+
 // expose it to windows object.
 module.exports = OtpAPI;

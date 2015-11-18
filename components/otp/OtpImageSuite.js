@@ -22,7 +22,12 @@ var INNER_MESSAGES = {
   "phone": "手机号码格式错误",
   "mobile": "手机号码格式错误"
 };
-
+var DEBUG = false;
+function logInfo () {
+  if(DEBUG && typeof isObject(console)) {
+    console.log.apply(console, arguments);
+  }
+}
 /**
  * Clone object.
  * @param  {object} source source
@@ -104,7 +109,7 @@ function OtpImageSuite(otpImageService, options) {
   var startTicker = function (scope, tickerLeft) {
     if (!tickerStopped) {
       tickerId = setTimeout(function () {
-        console.log("ticker `%s` ", tickerLeft);
+        logInfo("ticker `%s` ", tickerLeft);
         scope.fireEvent("showTicker", tickerLeft);
         tickerLeft = tickerLeft - 1;
         if (tickerLeft > 0) {
@@ -210,7 +215,7 @@ OtpImageSuite.prototype = {
   },
 
   fireEvent: function (eventType, data) {
-    console.log("fireEvent eventType: ", eventType, " data:", data);
+    logInfo("fireEvent eventType: ", eventType, " data:", data);
     var event = {
       type: eventType,
       data: data || null
@@ -289,7 +294,7 @@ OtpImageSuite.prototype = {
           }
           break;
         default:
-          console.log("nothing to do...., code: %s in `trySendOTP`", code);
+          logInfo("nothing to do...., code: %s in `trySendOTP`", code);
           _this.fireError(code, result.message);
       }
     });
