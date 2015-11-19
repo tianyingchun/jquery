@@ -134,7 +134,7 @@ function OtpImageSuite(otpImageService, options) {
   };
   // expose tearDownTicker.
   this.tearDownTicker = tearDownTicker;
-  this._startTicker = function (scope, tickerSecond) {
+  this.doStartTicker = function (scope, tickerSecond) {
     // tear down running ticker.
     tearDownTicker();
     // make sure provider
@@ -282,7 +282,7 @@ OtpImageSuite.prototype = {
           if (!isNaN(data.retrySeconds)) {
             tickerSecond = parseInt(data.retrySeconds);
           }
-          _this._startTicker(_this, tickerSecond);
+          _this.doStartTicker(_this, tickerSecond);
 
           break;
         case "000001":

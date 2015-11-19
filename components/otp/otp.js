@@ -278,6 +278,10 @@ var Otp = ComponentClass.extend({
   start: function () {
     this._trySendOtp();
   },
+  //@public simulate send fake otp, and show timer ticker.
+  startTicker: function () {
+    this.otpImgSuite.doStartTicker(this.otpImgSuite, 60);
+  },
   // @public
   reset: function () {
     this._restoreOTPInitState();

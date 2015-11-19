@@ -107,17 +107,40 @@ function renderSample1() {
     '  </div>\n' +
     '</form>\n' +
     '<button type="button" class="btn btn-default btn-manully-send">自定义发送短信按钮</button>&nbsp;&nbsp;\n' +
+    '<button type="button" class="btn btn-default btn-manully-simulator">模拟读秒（假发送）</button>&nbsp;&nbsp;\n' +
     '<button type="button" class="btn btn-default btn-manully-stoped">自定义终止短信按钮</button>\n';
 
   let scriptCode =
     'var $otpControl = $("[data-otp]");\n' +
     'var instance = $otpControl.getInstance();\n' +
+    'instance.setOptions({\n' +
+    '  onPreSendValidate: function () {\n' +
+    '    // var bankcardNo = $result.find("input[name=\'bankcard\']").val();\n' +
+    '    // if (bankcardNo) {\n' +
+    '    //   return true;\n' +
+    '    // }\n' +
+    '    // return false;\n' +
+    '    return true;\n' +
+    '  },\n' +
+    '  // eventListener: function (event) {\n' +
+    '  //   console.log(\'eventListener: \', event);\n' +
+    '  // },\n' +
+    '  otpErrorsCallback: function(event) {\n' +
+    '    console.log(\'eventListener: \', event);\n' +
+    '  }\n' +
+    '});\n' +
     '$result.on("click", ".btn-manully-send", function () {\n' +
-    '  $otpControl.otp("start");\n' +
+    '  $otpControl.otp(\'start\');\n' +
+    '});\n' +
+    '$result.on(\'click\',".btn-manully-simulator", function () {\n' +
+    '  // method 1\n' +
+    '  // $otpControl.otp(\'startTicker\');\n' +
+    '  // method 2\n' +
+    '  instance.startTicker();\n' +
     '});\n' +
     '$result.on("click", ".btn-manully-stoped", function () {\n' +
     '  instance.reset();\n' +
-    '});';
+    '})\n;';
 
   let $result = getSampleTemplate('OTP sample', {
     demoCode: demoCode,
@@ -132,21 +155,29 @@ function renderSample1() {
   var instance = $otpControl.getInstance();
   instance.setOptions({
     onPreSendValidate: function () {
-      var bankcardNo = $result.find("input[name='bankcard']").val();
-      if (bankcardNo) {
-        return true;
-      }
-      return false;
+      // var bankcardNo = $result.find("input[name='bankcard']").val();
+      // if (bankcardNo) {
+      //   return true;
+      // }
+      // return false;
+      return true;
     },
     // eventListener: function (event) {
     //   console.log('eventListener: ', event);
     // },
-    otpErrorsCallback: function(event) {
+    otpErrorsCallback: function (event) {
       console.log('eventListener: ', event);
     }
   });
   $result.on("click", ".btn-manully-send", function () {
     $otpControl.otp('start');
+  });
+
+  $result.on('click', ".btn-manully-simulator", function () {
+    // method 1
+    // $otpControl.otp('startTicker');
+    // method 2
+    instance.startTicker();
   });
 
   $result.on("click", ".btn-manully-stoped", function () {
