@@ -14,8 +14,8 @@ var regexRuleConst = {
   "empty": /^\s+|\s+$/ig, // 移除字符串空字符串
   "url": /^https?:\/\//,
   "bankcard": /^\d{12,}$/,
-  "captchaInput": /^.{4}$/,//TOP 图片验证码的验证表达式
-  "paypwd": /^[a-zA-Z0-9]{6,8}$///
+  "captchaInput": /^.{4}$/, //TOP 图片验证码的验证表达式
+  "paypwd": /^[a-zA-Z0-9]{6,8}$/ //
 };
 
 // extends validator methods.
@@ -24,6 +24,12 @@ validator.addMethod('isMobile', function (value, element) {
   var mobile = regexRuleConst.mobile;
   return (length == 11 && mobile.exec(value)) ? true : false;
 }, "请填写正确的手机号码");
+// 空串验证
+validator.addMethod('nonEmpty', function (value, element) {
+  var empty = regexRuleConst.empty;
+  value = value ? value.replace(empty, "") : "";
+  return value.length;
+}, "不能为空");
 
 // QQ 号
 validator.addMethod('isQQ', function (value, element) {
@@ -83,15 +89,15 @@ validator.DEFAULTS = {
   errorClass: "error",
   validClass: "success",
   errorElement: 'span',
-  errorPlacement: function(error, element) {
+  errorPlacement: function (error, element) {
     element.parents('.form-group').addClass('form-error').append(error);
   },
-  highlight: function(element, errorClass, validClass) {
+  highlight: function (element, errorClass, validClass) {
     // console.log('highlight', element, errorClass, validClass)
     $(element).parents('.form-group').addClass(formErrorClass).removeClass(formValidClass);
     // $(element.form).find("label[for=" + element.id + "]").addClass(errorClass);
   },
-  unhighlight: function(element, errorClass, validClass) {
+  unhighlight: function (element, errorClass, validClass) {
     // console.log('unhighlight',element, errorClass, validClass)
 
     $(element).parents('.form-group').removeClass(formErrorClass).addClass(formValidClass);
@@ -99,5 +105,3 @@ validator.DEFAULTS = {
   }
 }
 module.exports = validator;
-
-

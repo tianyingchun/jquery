@@ -256,6 +256,7 @@ function renderSample1() {
       },
       bankcard: {
         required: true,
+        nonEmpty: true,
         bankCard: true
       },
       password: {
@@ -283,6 +284,7 @@ function renderSample1() {
       },
       bankcard: {
         required:"请填写银行卡",
+        nonEmpty: "请填写银行卡",
         bankCard: "请输入正确的银行卡"
       },
       password: {
