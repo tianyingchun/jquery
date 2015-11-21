@@ -68,11 +68,11 @@ var Otp = ComponentClass.extend({
   // set captcha input, mobile input disabled status.
   _setMobileCaptchaDisabledStatus: function (disabled) {
     if (disabled) {
-      this.$mobileInput.prop("disabled", true);
-      this.$captchaInput.prop("disabled", true);
+      this.$mobileInput.prop("readonly", true);
+      this.$captchaInput.prop("readonly", true);
     } else {
-      this.$mobileInput.prop("disabled", false);
-      this.$captchaInput.prop("disabled", false);
+      this.$mobileInput.prop("readonly", false);
+      this.$captchaInput.prop("readonly", false);
     }
   },
   // update captcha token value.
