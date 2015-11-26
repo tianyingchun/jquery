@@ -77,6 +77,8 @@ function renderSample1() {
     ' amsl: 50,\n' +
     ' // the value indicate if we auto open popup dialog while DOMReady.\n' +
     ' domReadyShow: false,\n' +
+    '// if we need to destroy popup dom without cache dom structure each time. default cached.\n'+
+    ' autoDestroy: false,\n'+
     ' appending: true,\n' +
     ' appendTo: \'body\',\n' +
     ' autoClose: false,\n' +
@@ -183,6 +185,7 @@ function renderSample2() {
 
   $result.on('click', '.alert-open', function () {
     dialog.alert({
+      body: "Your dialog body" + Math.random(),
       onOpen: function () {
         $result.find('.output').html('on open..');
       },

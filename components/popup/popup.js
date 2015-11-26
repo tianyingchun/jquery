@@ -373,7 +373,11 @@ var Popup = ComponentClass.extend({
         autoCloseTO = setTimeout(this.bind(this.close), o.autoClose);
       }
     } else {
-      $popup.hide();
+      if (o.autoDestroy === true) {
+        $popup.remove();
+      } else {
+        $popup.hide();
+      }
       this._triggerCall(o.onClose);
       if (o.loadUrl) {
         o.contentContainer.empty();
@@ -391,6 +395,8 @@ Popup.DEFAULTS = {
   amsl: 50,
   // the value indicate if we auto open popup dialog while DOMReady.
   domReadyShow: false,
+  // if we need to destroy popup dom without cache dom structure each time. default cached.
+  autoDestroy: false,
   appending: true,
   appendTo: 'body',
   autoClose: false,

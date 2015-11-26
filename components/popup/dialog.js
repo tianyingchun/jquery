@@ -97,6 +97,7 @@ function dialog(type, options) {
       triggerCall.call(this, o.onClose);
       unbindEvents(this);
     },
+    autoDestroy: true,
     appendTo: o.appendTo,
     appending: true,
     // for confirm dialog box.
