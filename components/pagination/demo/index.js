@@ -144,22 +144,17 @@ function renderSample3() {
 
   let scriptCode =
     '$result.on("click", \'.dynamic-initial\', function () {\n' +
-    '  var paginationInstance = $pagination.getInstance();\n' +
-    '  console.log("initail pagination dynamic");\n' +
-    '  // dynamic set onChange callback, method 1\n' +
-    '  paginationInstance.setState({\n' +
-    '    current: 1,\n' +
-    '    _current: 1\n' +
-    '  });\n' +
-    '  paginationInstance.setOptions({\n' +
-    '    total: 100,\n' +
-    '    current: 1,\n' +
-    '    onChange: function (page) {\n' +
-    '      console.log(\'current page: \', page);\n' +
-    '    }\n' +
-    '  });\n' +
-    '  paginationInstance.render();\n' +
-    '});';
+    '   var paginationInstance = $pagination.getInstance();\n' +
+    '   console.log(\'initail pagination dynamic\');\n' +
+    '   // dynamic set onChange callback, method 1\n' +
+    '   paginationInstance.setOptions({\n' +
+    '     total: 100,\n' +
+    '     current: 1,\n' +
+    '     onChange: function (page) {\n' +
+    '       console.log(\'current page: \', page);\n' +
+    '     }\n' +
+    '   }).rerender();\n' +
+    ' });';
 
   let $result = getSampleTemplate('动态初始化PAGINATION', {
     demoCode: demoCode,
@@ -176,18 +171,13 @@ function renderSample3() {
     var paginationInstance = $pagination.getInstance();
     console.log('initail pagination dynamic');
     // dynamic set onChange callback, method 1
-    paginationInstance.setState({
-      current: 1,
-      _current: 1
-    });
     paginationInstance.setOptions({
       total: 100,
       current: 1,
       onChange: function (page) {
         console.log('current page: ', page);
       }
-    });
-    paginationInstance.render();
+    }).rerender();
   });
 }
 

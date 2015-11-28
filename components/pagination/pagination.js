@@ -122,6 +122,22 @@ var Pagination = ComponentClass.extend({
       this.$element.html(this.renderComplexMode());
     }
   },
+  /**
+   * re render status.
+   * @author tianyingchun
+   * @date   2015-11-28
+   */
+  rerender: function () {
+    var o = this.options;
+    this.setState({
+      current: o.current,
+      _current: o.current,
+      pageSize: o.pageSize,
+    });
+    this.render();
+    // return this.
+    return this;
+  },
   renderComplexMode: function () {
     var props = this.options;
 

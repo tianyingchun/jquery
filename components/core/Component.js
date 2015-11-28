@@ -56,6 +56,7 @@ Component.prototype = {
   // @public
   setOptions: function (options) {
     this.options = $.extend(this.options, options);
+    return this;
   },
   //@public
   getOption: function (key) {
