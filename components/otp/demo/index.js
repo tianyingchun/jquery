@@ -154,6 +154,7 @@ function renderSample1() {
   var $otpControl = $("[data-otp]");
   var instance = $otpControl.getInstance();
   instance.setOptions({
+    leftSecondFormatter:"{0}S 后可重新发送",
     onPreSendValidate: function () {
       // var bankcardNo = $result.find("input[name='bankcard']").val();
       // if (bankcardNo) {
