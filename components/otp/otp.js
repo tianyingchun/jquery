@@ -13,8 +13,11 @@ var Otp = ComponentClass.extend({
   componentName: componentName,
   initialize: function ($element, options) {
 
+    // indicates if otp ticker has been running.
     this.running = false;
 
+    // indicates if otp api has been proccessing.
+    this.otpSending = false;
     // cache ui components.
     this.$mobileInput = $element.find(options.mobileInputSelector);
     this.$captchaControl = $element.find(options.captchaControlSelector);
@@ -53,8 +56,14 @@ var Otp = ComponentClass.extend({
   },
   // otp sending pre handler.
   _OTPSendingHandler: function (event) {
+    this.otpSending = true;
     // do nothing... may be we can show loading spinner here.
-
+    this.__otpGetBtnText = this.$otpGet.text() || '';
+    this.$otpGet.addClass('sending').text(this.options.otpSendingText || '');
+  },
+  // recovery OTP Sending status while api call finished.
+  _RecoveryOTPSendingStatus: function () {
+    this.$otpGet.removeClass('sending').text(this.options.__otpGetBtnText || '发送短信');
   },
   // otp sent success handler.
   _OTPSentSuccessHandler: function (data) {
@@ -97,6 +106,8 @@ var Otp = ComponentClass.extend({
   },
   // OTP Error handler.
   _OTPErrorHandler: function (event) {
+    // clear OTPSending status.
+    this._RecoveryOTPSendingStatus();
     var error = event.data;
     var code = error.code;
     var message = error.message;
@@ -136,6 +147,8 @@ var Otp = ComponentClass.extend({
     this.$otpGet.css("display", "block");
     this.$otpTicker.css("display", "none");
     this.$otpTicker.html("");
+    // clear OTPSending status.
+    this._RecoveryOTPSendingStatus();
   },
 
   // capcha show handler
@@ -153,6 +166,7 @@ var Otp = ComponentClass.extend({
    */
   _restoreOTPInitState: function () {
     this.running = false;
+    this.otpSending = false;
     // tear down ticker now.
     this.otpImgSuite.tearDownTicker();
     this._OTPCloseTickerHandler();
@@ -248,6 +262,10 @@ var Otp = ComponentClass.extend({
   //
 
   _trySendOtp: function () {
+    // if current is runing return to avoid repeat invoke api.
+    if (this.otpSending == true) {
+      return;
+    }
     var preSendValidateResult = this.options.onPreSendValidate();
     if (typeof preSendValidateResult != 'undefined' && preSendValidateResult === false) {
       console.log("trySendOtp()->", "preSendValidate failed.");
@@ -334,7 +352,8 @@ Otp.DEFAULTS = {
   otpInputSelector: ".otp-input",
   // $("计时器")
   otpTickerSelector: ".ticker",
-
+  // 发送前 在后台还没有返回成功状态前显示loading效果
+  otpSendingText: '发送中...',
   // 默认事件侦听器
   eventListener: function (event) {
 
