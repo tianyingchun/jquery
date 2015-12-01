@@ -63,7 +63,8 @@ var Otp = ComponentClass.extend({
   },
   // recovery OTP Sending status while api call finished.
   _RecoveryOTPSendingStatus: function () {
-    this.$otpGet.removeClass('sending').text(this.options.__otpGetBtnText || '发送短信');
+    this.otpSending = false;
+    this.$otpGet.removeClass('sending').text(this.__otpGetBtnText || '发送短信');
   },
   // otp sent success handler.
   _OTPSentSuccessHandler: function (data) {
