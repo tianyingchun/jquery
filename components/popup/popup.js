@@ -37,9 +37,12 @@ function getTopPos(includeScroll) {
 
 var Popup = ComponentClass.extend({
   componentName: componentName,
+  // initialize only implement onece.
+  //
   initialize: function ($element, options) {
     // the default $shadowElement is $element.
     this.$shadowElement = $element; // equals this.$element
+
     // show dialog while initialization.
     if (options.domReadyShow) {
       this.show();
@@ -52,8 +55,20 @@ var Popup = ComponentClass.extend({
     // unbind events.
     this._unbindEvents();
   },
-  /** @public show popup */
+  shadowPopupElement: function () {
+      // if we disabled popup cache, we need to clone popup element as shadowElement.
+    if(this.options.disablePopupCache == true) {
+      this.$shadowElement = this.$element.clone();
+    }
+  },
+  /**
+   * @public show popup
+   * Note: invoke show(), and then you can access $popup.$shadowElement
+   * @return
+   */
   show: function () {
+    // re shadow popupelement.
+    this.shadowPopupElement();
     var o         = this.options;
     var $popup    = this.$shadowElement;
     // hide scrollbar?
@@ -144,7 +159,8 @@ var Popup = ComponentClass.extend({
     $.isFunction(func) && func.call(this, arg);
   },
   _calcPosition: function () {
-    var $popup = this.$shadowElement;
+    // must use $element to calculate height, width.
+    var $popup = this.$element;
     var o      = this.options;
     vPos       = fixedVPos ? o.position[1] : Math.max(0, ((wH - $popup.outerHeight(true)) / 2) - o.amsl), hPos = fixedHPos ? o.position[0] : (wW - $popup.outerWidth(true)) / 2, inside = this._insideWindow();
   },
@@ -204,8 +220,6 @@ var Popup = ComponentClass.extend({
   },
   open: function () {
     var o      = this.options;
-    var $popup = this.$shadowElement;
-    this.$shadowElement = $popup;
     var id     = this.id;
     // MODAL OVERLAY
     if (o.modal) {
@@ -238,10 +252,7 @@ var Popup = ComponentClass.extend({
       left = ($container.width() - pWidth) /2;
       top = ($container.height() - pHeight) /2;
     }
-    // if we disabled popup cache, we need to clone popup element as shadowElement.
-    if(o.disablePopupCache == true) {
-      this.$shadowElement = $popup.clone();
-    }
+
     this.$shadowElement
       .css({
         'left': left,
