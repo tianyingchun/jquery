@@ -38,6 +38,8 @@ function getTopPos(includeScroll) {
 var Popup = ComponentClass.extend({
   componentName: componentName,
   initialize: function ($element, options) {
+    // the default $shadowElement is $element.
+    this.$shadowElement = $element; // equals this.$element
     // show dialog while initialization.
     if (options.domReadyShow) {
       this.show();
@@ -53,8 +55,6 @@ var Popup = ComponentClass.extend({
   /** @public show popup */
   show: function () {
     var o         = this.options;
-    // the default $shadowElement is $element.
-    this.$shadowElement = this.$element;
     var $popup    = this.$shadowElement;
     // hide scrollbar?
     if (!o.scrollBar) {
