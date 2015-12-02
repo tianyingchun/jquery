@@ -54,13 +54,13 @@ function renderSample1() {
 
   let demoCode =
     '<button class="popup-open btn btn-primary">Open Popup</button>\n' +
-    '<div id="popup1" data-popup=\'{"modalClose": true, "follow":[false, false], "position": [150, 400], "speed": 650, "transition": "slideIn", "transitionClose": "slideBack", "domReadyShow": false}\' class="popup">\n' +
+    '<div id="popup1" data-popup=\'{"modalClose": true, "scrollBar": false, "disablePopupCache": true, "speed": 650, "transition": "slideIn", "transitionClose": "slideBack", "domReadyShow": false}\' class="popup">\n' +
     '   <div class="popup-dialog">\n' +
     '       <div class="popup-hd">\n' +
     '           <span class="close"><i>×</i></span>\n' +
     '       </div>\n' +
     '       <div class="popup-bd">\n' +
-    '           <div class="content">111</div>\n' +
+    '           <div class="content"><button class="btn btn-sample-popup btn-primary">alert</button></div>\n' +
     '       </div>\n' +
     '   </div>\n' +
     '</div>';
@@ -78,7 +78,7 @@ function renderSample1() {
     ' // the value indicate if we auto open popup dialog while DOMReady.\n' +
     ' domReadyShow: false,\n' +
     '// if we need to destroy popup dom without cache dom structure each time. default cached.\n'+
-    ' autoDestroy: false,\n'+
+    ' disablePopupCache: false,\n'+
     ' appending: true,\n' +
     ' appendTo: \'body\',\n' +
     ' autoClose: false,\n' +
@@ -117,11 +117,21 @@ function renderSample1() {
   $renderTo.append($result);
 
   UI.run(Popup.getInstanceName());
+  $result.on('click', '.btn-sample-popup', function () {
+    alert('popup dialog');
+  });
 
   $result.on('click', '.popup-open', function () {
-    var $popup = $('#popup1');
-    var popupInstance = $popup.getInstance();
-    popupInstance.show();
+    // var $popup = $('#popup1').popup();
+    var popupInstance = $('#popup1').getInstance();
+    popupInstance.setOptions({
+      onOpen: function () {
+        console.log('onOpen...');
+      },
+      onClose: function () {
+        console.log('onClose...');
+      }
+    }).show();
   });
 
 }

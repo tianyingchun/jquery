@@ -94,10 +94,13 @@ function dialog(type, options) {
       bindEvent(this);
     },
     onClose: function () {
+      // manuly remove cached dialog dom.
+      // Note: must set disablePopupCache: false.
+      $element.remove();
       triggerCall.call(this, o.onClose);
       unbindEvents(this);
     },
-    autoDestroy: true,
+    disablePopupCache: false,
     appendTo: o.appendTo,
     appending: true,
     // for confirm dialog box.

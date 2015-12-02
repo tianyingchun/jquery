@@ -38,10 +38,6 @@ function getTopPos(includeScroll) {
 var Popup = ComponentClass.extend({
   componentName: componentName,
   initialize: function ($element, options) {
-    // hide scrollbar?
-    if (!options.scrollBar) {
-      $('html').css('overflow', 'hidden');
-    }
     // show dialog while initialization.
     if (options.domReadyShow) {
       this.show();
@@ -57,7 +53,13 @@ var Popup = ComponentClass.extend({
   /** @public show popup */
   show: function () {
     var o         = this.options;
-    var $popup    = this.$element;
+    // the default $shadowElement is $element.
+    this.$shadowElement = this.$element;
+    var $popup    = this.$shadowElement;
+    // hide scrollbar?
+    if (!o.scrollBar) {
+      $('html').css('overflow', 'hidden');
+    }
     this._triggerCall(o.onOpen);
     // reset current popup counts, how many popups rendered in dom view.
     popups        = ($w.data(componentName) || 0) + 1;
@@ -73,7 +75,7 @@ var Popup = ComponentClass.extend({
   },
   /** @public hide popup */
   close: function () {
-    var $popup = this.$element;
+    var $popup = this.$shadowElement;
     var o      = this.options;
     var id     = this.id;
     if (o.modal) {
@@ -92,7 +94,7 @@ var Popup = ComponentClass.extend({
     return false; // Prevent default
   },
   _bindEvents: function () {
-    var $popup = this.$element;
+    var $popup = this.$shadowElement;
     var o      = this.options;
     var id     = this.id;
 
@@ -127,7 +129,7 @@ var Popup = ComponentClass.extend({
   },
   _unbindEvents: function () {
     var o      = this.options;
-    var $popup = this.$element;
+    var $popup = this.$shadowElement;
     var id     = this.id;
     if (!o.scrollBar) {
       $('html').css('overflow', 'auto');
@@ -142,12 +144,12 @@ var Popup = ComponentClass.extend({
     $.isFunction(func) && func.call(this, arg);
   },
   _calcPosition: function () {
-    var $popup = this.$element;
+    var $popup = this.$shadowElement;
     var o      = this.options;
     vPos       = fixedVPos ? o.position[1] : Math.max(0, ((wH - $popup.outerHeight(true)) / 2) - o.amsl), hPos = fixedHPos ? o.position[0] : (wW - $popup.outerWidth(true)) / 2, inside = this._insideWindow();
   },
   _insideWindow: function () {
-    var $popup = this.$element;
+    var $popup = this.$shadowElement;
     return {
       x: wW > $popup.outerWidth(true),
       y: wH > $popup.outerHeight(true)
@@ -155,7 +157,7 @@ var Popup = ComponentClass.extend({
   },
   createContent: function () {
     var o              = this.options;
-    var $popup         = this.$element;
+    var $popup         = this.$shadowElement;
     o.contentContainer = o.contentContainer ? $(o.contentContainer, $popup) : $popup;
 
     var asyncCallback = this.bind(function (status, $this) {
@@ -202,7 +204,8 @@ var Popup = ComponentClass.extend({
   },
   open: function () {
     var o      = this.options;
-    var $popup = this.$element;
+    var $popup = this.$shadowElement;
+    this.$shadowElement = $popup;
     var id     = this.id;
     // MODAL OVERLAY
     if (o.modal) {
@@ -235,13 +238,18 @@ var Popup = ComponentClass.extend({
       left = ($container.width() - pWidth) /2;
       top = ($container.height() - pHeight) /2;
     }
-    $popup
+    // if we disabled popup cache, we need to clone popup element as shadowElement.
+    if(o.disablePopupCache == true) {
+      this.$shadowElement = $popup.clone();
+    }
+    this.$shadowElement
       .css({
         'left': left,
         'position': o.positionStyle || 'absolute',
         'top': top,
         'z-index': o.zIndex + popups + 1
       }).each(function () {
+        // if we set 'appending': true it will remove all events attached on $popup elements
         if (o.appending) {
           $(this).appendTo(o.appendTo);
         }
@@ -250,7 +258,7 @@ var Popup = ComponentClass.extend({
     this.doTransition(true);
   },
   reposition: function (animateSpeed) {
-    var $popup        = this.$element;
+    var $popup        = this.$shadowElement;
     var o             = this.options;
     var _calcPosition = this.bind(this._calcPosition);
     wH                = windowHeight();
@@ -285,7 +293,7 @@ var Popup = ComponentClass.extend({
   recenter: function (content) {
     var _width  = content.width();
     var _height = content.height();
-    var $popup  = this.$element;
+    var $popup  = this.$shadowElement;
     var o       = this.options;
     var css     = {};
 
@@ -321,7 +329,7 @@ var Popup = ComponentClass.extend({
   },
   doTransition: function (open) {
     var o = this.options;
-    var $popup = this.$element;
+    var $popup = this.$shadowElement;
 
     switch (open ? o.transition : o.transitionClose || o.transition) {
       case "slideIn":
@@ -352,7 +360,7 @@ var Popup = ComponentClass.extend({
     }
   },
   animate: function (css, open) {
-    var $popup = this.$element;
+    var $popup = this.$shadowElement;
     var o = this.options;
 
     $popup.css({
@@ -363,7 +371,7 @@ var Popup = ComponentClass.extend({
     }, this, open));
   },
   onCompleteCallback: function (open) {
-    var $popup = this.$element;
+    var $popup = this.$shadowElement;
     var o      = this.options;
 
     if (open) {
@@ -373,8 +381,9 @@ var Popup = ComponentClass.extend({
         autoCloseTO = setTimeout(this.bind(this.close), o.autoClose);
       }
     } else {
-      if (o.autoDestroy === true) {
-        $popup.remove();
+      if (o.disablePopupCache === true) {
+        // remove original node, keep clone dom as child of <body>
+        this.$shadowElement.remove();
       } else {
         $popup.hide();
       }
@@ -396,7 +405,7 @@ Popup.DEFAULTS = {
   // the value indicate if we auto open popup dialog while DOMReady.
   domReadyShow: false,
   // if we need to destroy popup dom without cache dom structure each time. default cached.
-  autoDestroy: false,
+  disablePopupCache: false,
   appending: true,
   appendTo: 'body',
   autoClose: false,
