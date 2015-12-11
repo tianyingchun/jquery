@@ -12,7 +12,7 @@ var NivoSlider = ComponentClass.extend({
 
   initialize: function ($element, options) {
     // Useful variables. Play carefully.
-    var vars = {
+    var vars = this._vars = {
       currentSlide: 0,
       currentImage: '',
       totalSlides: 0,
@@ -29,7 +29,7 @@ var NivoSlider = ComponentClass.extend({
     slider.data('nivo:vars', vars).addClass('nivoSlider');
 
     // Find our slider children
-    var kids = slider.children();
+    var kids = this._kids = slider.children();
     kids.each(function () {
       var child = $(this);
       var link = '';
@@ -116,35 +116,24 @@ var NivoSlider = ComponentClass.extend({
     //Process initial  caption
     processCaption(settings);
 
+    var _this = this;
     // In the words of Super Mario "let's a go!"
-    var timer = 0;
+    _this.timer = 0;
     if (!settings.manualAdvance && kids.length > 1) {
-      timer = setInterval(function () {
+      _this.timer = setInterval(function () {
         nivoRun(slider, kids, settings, false);
       }, settings.pauseTime);
     }
-
     // Add Direction nav
     if (settings.directionNav) {
       slider.append('<div class="nivo-directionNav"><a class="nivo-prevNav">' + settings.prevText + '</a><a class="nivo-nextNav">' + settings.nextText + '</a></div>');
 
       $(slider).on('click', 'a.nivo-prevNav', function () {
-        if (vars.running) {
-          return false;
-        }
-        clearInterval(timer);
-        timer = '';
-        vars.currentSlide -= 2;
-        nivoRun(slider, kids, settings, 'prev');
+        _this.slidePrev();
       });
 
       $(slider).on('click', 'a.nivo-nextNav', function () {
-        if (vars.running) {
-          return false;
-        }
-        clearInterval(timer);
-        timer = '';
-        nivoRun(slider, kids, settings, 'next');
+        _this.slideNext();
       });
     }
 
@@ -171,8 +160,8 @@ var NivoSlider = ComponentClass.extend({
       $('a', vars.controlNavEl).bind('click', function () {
         if (vars.running) return false;
         if ($(this).hasClass('active')) return false;
-        clearInterval(timer);
-        timer = '';
+        clearInterval(_this.timer);
+        _this.timer = '';
         sliderImg.attr('src', vars.currentImage.attr('src'));
         vars.currentSlide = $(this).attr('rel') - 1;
         nivoRun(slider, kids, settings, 'control');
@@ -183,13 +172,13 @@ var NivoSlider = ComponentClass.extend({
     if (settings.pauseOnHover) {
       slider.hover(function () {
         vars.paused = true;
-        clearInterval(timer);
-        timer = '';
+        clearInterval(_this.timer);
+        _this.timer = '';
       }, function () {
         vars.paused = false;
-        // Restart the timer
-        if (timer === '' && !settings.manualAdvance) {
-          timer = setInterval(function () {
+        // Restart the _this.timer
+        if (_this.timer === '' && !settings.manualAdvance) {
+          _this.timer = setInterval(function () {
             nivoRun(slider, kids, settings, false);
           }, settings.pauseTime);
         }
@@ -210,14 +199,14 @@ var NivoSlider = ComponentClass.extend({
       if ($(kids[vars.currentSlide]).is('a')) {
         $(kids[vars.currentSlide]).css('display', 'block');
       }
-      // Restart the timer
-      if (timer === '' && !vars.paused && !settings.manualAdvance) {
-        timer = setInterval(function () {
+      // Restart the _this.timer
+      if (_this.timer === '' && !vars.paused && !settings.manualAdvance) {
+        _this.timer = setInterval(function () {
           nivoRun(slider, kids, settings, false);
         }, settings.pauseTime);
       }
       // Trigger the afterChange callback
-      settings.afterChange.call(this);
+      settings.afterChange.call(this, vars.currentSlide);
     });
 
     // Add slices for slice animations
@@ -299,7 +288,7 @@ var NivoSlider = ComponentClass.extend({
     };
 
     // Private run method
-    var nivoRun = function (slider, kids, settings, nudge) {
+    var nivoRun  = this._nivoRun = function (slider, kids, settings, nudge) {
       // Get our vars
       var vars = slider.data('nivo:vars');
 
@@ -314,7 +303,7 @@ var NivoSlider = ComponentClass.extend({
       }
 
       // Trigger the beforeChange callback
-      settings.beforeChange.call(this);
+      settings.beforeChange.call(this, vars.currentSlide);
 
       // Set current background before change
       if (!nudge) {
@@ -686,6 +675,33 @@ var NivoSlider = ComponentClass.extend({
 
     return this;
 
+  },
+  slideNext: function () {
+    var vars = this._vars;
+    var slider = this.$element;
+    var kids = this._kids;
+    var settings = this.options;
+
+    if (vars.running) {
+      return false;
+    }
+    clearInterval(this.timer);
+    this.timer = '';
+    this._nivoRun(slider, kids, settings, 'next');
+  },
+  slidePrev: function () {
+    var vars = this._vars;
+    var slider = this.$element;
+    var kids = this._kids;
+    var settings = this.options;
+
+    if (vars.running) {
+      return false;
+    }
+    clearInterval(this.timer);
+    this.timer = '';
+    this._vars.currentSlide -= 2;
+    this._nivoRun(slider, kids, settings, 'prev');
   },
   stop: function () {
     var $element = this.$element;
