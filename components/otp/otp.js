@@ -11,7 +11,7 @@ var componentName = "otp";
 
 var Otp = ComponentClass.extend({
   componentName: componentName,
-  initialize: function ($element, options) {
+  initialize: function($element, options) {
 
     // indicates if otp ticker has been running.
     this.running = false;
@@ -30,6 +30,8 @@ var Otp = ComponentClass.extend({
     // mrege the lastest options for otpService, and otpImageSuite service.
     this._mergeServiceConfig();
 
+    // do nothing... may be we can show loading spinner here.
+    this.__otpGetBtnText = this.$otpGet.text() || '发送短信';
     this._hookEvents();
     this._hookOtpSuiteModule();
 
@@ -40,7 +42,7 @@ var Otp = ComponentClass.extend({
       this.$captchaControl.css("display", "block");
     }
   },
-  _mergeServiceConfig: function () {
+  _mergeServiceConfig: function() {
     var options = this.options;
     // the configuration for otpImageSuite
     var suiteServiceCfg = {
@@ -55,19 +57,17 @@ var Otp = ComponentClass.extend({
     this.otpImgSuite = new OtpImageSuite(otpService, suiteServiceCfg);
   },
   // otp sending pre handler.
-  _OTPSendingHandler: function (event) {
+  _OTPSendingHandler: function(event) {
     this.otpSending = true;
-    // do nothing... may be we can show loading spinner here.
-    this.__otpGetBtnText = this.$otpGet.text() || '';
     this.$otpGet.addClass('sending').text(this.options.otpSendingText || '');
   },
   // recovery OTP Sending status while api call finished.
-  _RecoveryOTPSendingStatus: function () {
+  _RecoveryOTPSendingStatus: function() {
     this.otpSending = false;
-    this.$otpGet.removeClass('sending').text(this.__otpGetBtnText || '发送短信');
+    this.$otpGet.removeClass('sending').text(this.__otpGetBtnText);
   },
   // otp sent success handler.
-  _OTPSentSuccessHandler: function (data) {
+  _OTPSentSuccessHandler: function(data) {
     // don't hide captcha 控件. we can do this in client. by cfg.otpHasPassedCallback().
     // $captchaControl.css("display", "none");
     this._setMobileCaptchaDisabledStatus(true);
@@ -76,7 +76,7 @@ var Otp = ComponentClass.extend({
     }
   },
   // set captcha input, mobile input disabled status.
-  _setMobileCaptchaDisabledStatus: function (disabled) {
+  _setMobileCaptchaDisabledStatus: function(disabled) {
     if (disabled) {
       this.$mobileInput.prop("readonly", true);
       this.$captchaInput.prop("readonly", true);
@@ -86,33 +86,33 @@ var Otp = ComponentClass.extend({
     }
   },
   // update captcha token value.
-  _setCaptchaToken: function (value) {
+  _setCaptchaToken: function(value) {
     this.$element.data(this.options.dataCaptchaToken, value || null);
   },
   // get captcha token value.
-  _getCaptchaToken: function () {
+  _getCaptchaToken: function() {
     return this.$element.data(this.options.dataCaptchaToken);
   },
 
-  _setCaptchaId: function (value) {
+  _setCaptchaId: function(value) {
     this.$element.data(this.options.dataCaptchaId, value || null);
   },
   // get captcha id.
-  _getCaptchaId: function () {
+  _getCaptchaId: function() {
     return this.$element.data(this.options.dataCaptchaId);
   },
   // return client unique device id.
-  _getDeviceId: function () {
+  _getDeviceId: function() {
     return "";
   },
   // OTP Error handler.
-  _OTPErrorHandler: function (event) {
+  _OTPErrorHandler: function(event) {
     // clear OTPSending status.
     this._RecoveryOTPSendingStatus();
     var error = event.data;
     var code = error.code;
     var message = error.message;
-    var otpErrorsCallback = this.options.otpErrorsCallback || function () {};
+    var otpErrorsCallback = this.options.otpErrorsCallback || function() {};
     switch (code) {
       case "mobile_invalid":
         // Now we do nothing, we need to handler these message in client consumer.
@@ -133,7 +133,7 @@ var Otp = ComponentClass.extend({
     }
   },
   // show ticker handler.
-  _OTPShowTickerHandler: function (data) {
+  _OTPShowTickerHandler: function(data) {
     this.running = true;
     this.$otpGet.css("display", "none");
     this.$otpTicker.css("display", "block");
@@ -142,7 +142,7 @@ var Otp = ComponentClass.extend({
   },
 
   // close ticker handler.
-  _OTPCloseTickerHandler: function (data) {
+  _OTPCloseTickerHandler: function(data) {
     this.running = false;
     this._setMobileCaptchaDisabledStatus(false);
     this.$otpGet.css("display", "block");
@@ -153,7 +153,7 @@ var Otp = ComponentClass.extend({
   },
 
   // capcha show handler
-  _OTPShowCaptchaHandler: function (data) {
+  _OTPShowCaptchaHandler: function(data) {
     var captcha = data;
     // show captcha control.
     this.$captchaControl.css("display", "block");
@@ -165,7 +165,7 @@ var Otp = ComponentClass.extend({
    * While we re-input mobile number, we need to restore OTP Initialize states,
    * and make user has chance to send otp without captcha.
    */
-  _restoreOTPInitState: function () {
+  _restoreOTPInitState: function() {
     this.running = false;
     this.otpSending = false;
     // tear down ticker now.
@@ -179,13 +179,13 @@ var Otp = ComponentClass.extend({
     }
   },
   // refresh captcha
-  _OTPRefreshCaptchaUI: function (captcha) {
+  _OTPRefreshCaptchaUI: function(captcha) {
     // make sure that each url have not cache.
     this.$captchaImage.attr("src", captcha.captchaUrl ? captcha.captchaUrl + "?r=" + Math.random() : "");
     this._setCaptchaId(captcha.captchaId);
   },
   // flush token handler.
-  _OTPFlushTokenHandler: function (data) {
+  _OTPFlushTokenHandler: function(data) {
     var token = data;
     this._setCaptchaToken(token);
     // $this.find(options.otpGetSelector).prop("disabled", false);
@@ -195,14 +195,14 @@ var Otp = ComponentClass.extend({
     }
   },
   // 注册UI DOM 事件处理器
-  _hookEvents: function () {
+  _hookEvents: function() {
     var _this = this;
     // 监听 发送短信按钮click 事件
-    this.$otpGet.on("click", function (e) {
+    this.$otpGet.on("click", function(e) {
       _this._trySendOtp();
     });
     // 监听 图片验证码输入框 change事件，发送CMMAND 去验证图片码
-    this.$captchaInput.on("input", function (e) {
+    this.$captchaInput.on("input", function(e) {
       var val = $.trim($(this).val());
       if (val && val.length >= 4) {
         _this.otpImgSuite.verifyCaptcha({
@@ -212,15 +212,15 @@ var Otp = ComponentClass.extend({
       }
     });
     // 监听 图片随机码的刷新事件
-    this.$captchaImage.on("click", function () {
+    this.$captchaImage.on("click", function() {
       _this.refreshCaptcha();
     });
   },
   // 注册OtpImageSuite 模块事件
-  _hookOtpSuiteModule: function () {
+  _hookOtpSuiteModule: function() {
     var options = this.options;
     var _this = this;
-    this.otpImgSuite.addReceiver(function (event) {
+    this.otpImgSuite.addReceiver(function(event) {
       var type = event.type;
       var data = event.data;
       // always invoke event listener to passed components current states.
@@ -262,7 +262,7 @@ var Otp = ComponentClass.extend({
   // OtpImageSuite 发短信业务方法
   //
 
-  _trySendOtp: function () {
+  _trySendOtp: function() {
     // if current is runing return to avoid repeat invoke api.
     if (this.otpSending == true) {
       return;
@@ -284,7 +284,7 @@ var Otp = ComponentClass.extend({
   },
 
   //@override parent.setOptions.
-  setOptions: function (options) {
+  setOptions: function(options) {
     this.options = $.extend(this.options, options);
 
     // remerge service options.
@@ -294,25 +294,25 @@ var Otp = ComponentClass.extend({
     this._hookOtpSuiteModule();
   },
   // @public
-  start: function () {
+  start: function() {
     this._trySendOtp();
   },
   //@public simulate send fake otp, and show timer ticker.
-  startTicker: function () {
+  startTicker: function() {
     this.otpImgSuite.doStartTicker(this.otpImgSuite, 60);
   },
   // @public
-  reset: function () {
+  reset: function() {
     this._restoreOTPInitState();
   },
   // @public
   // OtpImageSuite 刷新图片验证码方法
-  refreshCaptcha: function () {
+  refreshCaptcha: function() {
     if (!this.running) {
       this.otpImgSuite.refreshCaptcha();
     }
   },
-  destroy: function () {
+  destroy: function() {
     this._destroy();
     this.$otpGet.off('click');
     this.$captchaInput.off('input');
@@ -327,7 +327,7 @@ Otp.DEFAULTS = {
     trySendOTPApi: "" // `/otp/changeSendOtp`
   },
   // provider pre sent validation if return false, don't invoke trySentOtp.
-  onPreSendValidate: function () {},
+  onPreSendValidate: function() {},
   // The value indicates if we need to auto send otp message while captcha varify success!
   autoSendOtp: false,
   // default show captcha
@@ -356,19 +356,19 @@ Otp.DEFAULTS = {
   // 发送前 在后台还没有返回成功状态前显示loading效果
   otpSendingText: '发送中...',
   // 默认事件侦听器
-  eventListener: function (event) {
+  eventListener: function(event) {
 
   },
   // 允许OTP 发送成功回调客户端指定的函数
-  otpHasPassedCallback: function (result) {
+  otpHasPassedCallback: function(result) {
 
   },
   // 允许OTP 发送失败回调客户端指定的函数(code, message)
-  otpErrorsCallback: function (event) {
+  otpErrorsCallback: function(event) {
 
   },
   // 允许我们动态按需从客户端拿自定义的数据，针对不同的OTP 业务需求
-  getExtraData: function () {
+  getExtraData: function() {
     return null;
   }
 };
@@ -376,7 +376,7 @@ Otp.DEFAULTS = {
 createPlugin(componentName, Otp);
 
 // hook domReady().
-UI.ready(function (context) {
+UI.ready(function(context) {
 
   $('[data-otp]', context).otp();
 
