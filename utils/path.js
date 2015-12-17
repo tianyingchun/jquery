@@ -1,5 +1,4 @@
 var jQuery = require('jquery');
-var url = require('wurl');
 var lang = require('./lang');
 var path = {
   /**
@@ -25,9 +24,10 @@ var path = {
    * @return {String}       the final path
    */
   getUrl: function (path, query) {
-    var port = url('port'); // 443, 80.
-    var hostname = url('hostname');
-    var protocol = url('protocol');
+    var location = window.location;
+    var port = parseInt(location.port || 80); // 443, 80.
+    var protocol = location.protocol.replace(':', '');
+    var hostname = location.hostname;
     var finalPath;
     var isHttpUrl = new RegExp('(https|http|ftp)?://');
     if (isHttpUrl.test(path)) {
