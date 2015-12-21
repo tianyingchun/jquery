@@ -43,9 +43,14 @@ var Tabs = ComponentClass.extend({
   },
   active: function (index) {
     var options = this.options;
+    var $activeHeader = this.$tabHeaders.eq(index);
+    var $activeContent = this.$tabContents.eq(index);
     this.activeIndex = index;
-    this.$tabHeaders.eq(index).addClass('active').show().siblings(options.headerItemSelector).removeClass('active');
-    this.$tabContents.eq(index).addClass('active').show().siblings(options.contentItemSelector).removeClass('active').hide();
+
+    $activeHeader.addClass('active').show().siblings(options.headerItemSelector).removeClass('active');
+    $activeContent.addClass('active').show().siblings(options.contentItemSelector).removeClass('active').hide();
+    // call active customized callback()
+    options.onActive.call(this, index, $activeHeader, $activeContent);
   },
 
   _bindEvents: function () {
@@ -110,6 +115,8 @@ Tabs.DEFAULTS = {
   autoRotate: true,
   rotateDelay: 2000,
   activeIndex: 0,
+  // provider callback while the tab item has been actived.
+  onActive: $.noop,
   headerItemSelector: ".tabs-nav > li",
   contentItemSelector: ".tabs-bd >.tab-panel",
   launchOnMouseEnter: true
