@@ -158,10 +158,7 @@ var Lazyload = ComponentClass.extend({
     // https://github.com/search?utf8=%E2%9C%93&q=scrollstart
     this.isScrollTypeEvent = isScrollEvent || options.event == 'scrollstart' || options.event == 'scrollstop';
 
-    var throttleCheckAppear = this.throttleCheckAppear =
-      options.check_appear_throttle_time == 0
-      ? checkAppear
-      : throttle(checkAppear, options.check_appear_throttle_time);
+    var throttleCheckAppear = this.throttleCheckAppear = this._throttleCheckAppear(options);
 
     // lazyload pictures.
     this.doLazyLoading();
@@ -176,6 +173,24 @@ var Lazyload = ComponentClass.extend({
     $(function () {
       throttleCheckAppear($lazyElements, options);
     });
+  },
+  // @private
+  _throttleCheckAppear: function (options) {
+    var throttleCheckAppear =
+      options.check_appear_throttle_time == 0
+      ? checkAppear
+      : throttle(checkAppear, options.check_appear_throttle_time);
+      return throttleCheckAppear;
+  },
+  // @public
+  refreshAreaLazy: function(context) {
+    var $context = context || this.$element;
+    var options = this.options;
+    var $lazyElements = $context.find(options.lazy_item_selector);
+    var throttleCheckAppear = this._throttleCheckAppear(options);
+
+    // manully refresh lazy elements within specificed area container.
+    throttleCheckAppear($lazyElements, options);
   },
   // @public
   doLazyLoading: function () {
