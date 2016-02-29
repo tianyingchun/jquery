@@ -9,6 +9,7 @@ var Steps = require('./steps');
 var Slider = require('./slider');
 var Collapse = require('./collapse');
 var Tabs = require('./tabs');
+var Swiper = require('./swiper');
 
 module.exports = {
   Button: Button,
@@ -21,5 +22,6 @@ module.exports = {
   Steps: Steps,
   Slider: Slider,
   Collapse: Collapse,
-  Tabs: Tabs
+  Tabs: Tabs,
+  Swiper: Swiper
 };
