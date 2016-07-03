@@ -1,9 +1,8 @@
-require('./button.less');
 var $ = require('jquery');
-var {
-  UI, createPlugin, ComponentClass
-} = require('../core');
-var componentName = "cityselect";
+var { UI, createPlugin, ComponentClass } = require('../core');
+var { iosProvinces, iosCites, iosCountries } = require('./data');
+
+var componentName = "citySelect";
 
 var CitySelect = ComponentClass.extend({
   componentName: componentName,
@@ -13,6 +12,7 @@ var CitySelect = ComponentClass.extend({
     this.$city = $element.find(options.city.selector);
     this.$country = $element.find(options.country.selector);
 
+    console.log('city select ....');
 
   },
   setProvinceData: function (data) {
@@ -84,7 +84,7 @@ CitySelect.DEFAULTS = {
 createPlugin(componentName, CitySelect);
 
 UI.ready(function (context) {
-  $('[data-cityselect]', context).button();
+  $('[data-cityselect]', context).citySelect();
 }, CitySelect.getInstanceName(componentName));
 
 

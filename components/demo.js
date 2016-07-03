@@ -10,7 +10,7 @@ var StepsDemo = require('./steps/demo');
 var SliderDemo = require('./slider/demo');
 var CollapseDemo = require('./collapse/demo');
 var TabsDemo = require('./tabs/demo');
-
+var CitySelectDemo = require('./cityselect/demo');
 
 module.exports = {
   ButtonDemo,
@@ -24,5 +24,6 @@ module.exports = {
   StepsDemo,
   SliderDemo,
   CollapseDemo,
-  TabsDemo
+  TabsDemo,
+  CitySelectDemo
 };
