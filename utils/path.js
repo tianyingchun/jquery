@@ -17,6 +17,20 @@ var path = {
 
     return path.replace(/^\/+/ig, '/');
   },
+  getQueryString: function (name) {
+    var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+      return unescape(r[2]);
+    }
+    return null;
+  },
+  isHttpUrl: function (url) {
+    url = url || '';
+    var httpUrlPattern = new RegExp('(https|http|ftp)?://');
+    // match //www.baidu.com pattern
+    return url.indexOf("//") === 0 || httpUrlPattern.test(url);
+  },
   /**
    * Get current base url http://example.com
    * @param  {String} path  the url path '/workspace/list'
@@ -30,11 +44,12 @@ var path = {
     var hostname = location.hostname;
     var finalPath;
     var isHttpUrl = new RegExp('(https|http|ftp)?://');
-    if (isHttpUrl.test(path)) {
+    if (this.isHttpUrl(path)) {
       finalPath = path;
     } else {
       finalPath = lang.stringFormat('{0}://{1}{2}{3}', protocol, hostname, (port === 443 || port === 80) ? '' : (':' + port), this.normalizePath(path));
     }
+
     if (lang.isObject(query)) {
       var queryPath = [];
       jQuery.each(query, function (key, value) {
